@@ -1,0 +1,50 @@
+# Replace .github/workflows/deploy.yml with this file after granting workflow write scope.
+name: deploy
+
+on:
+  push:
+    branches: [main, master]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - name: Instalar dependências
+        run: pnpm install --frozen-lockfile
+      - name: Carimbo do deploy
+        run: echo "run ${{ github.run_id }} — $(date -u +%FT%TZ)" > public/deploy-id.txt
+      - name: Build (Vite → dist/)
+        run: pnpm build
+      - name: Aplicar migrations no D1
+        run: npx wrangler d1 migrations apply olhodetandera --remote
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || secrets.CLOUDFLARE_ID }}
+      - name: Configurar secrets do Travelpayouts no Worker
+        run: |
+          if [ -n "$TP_TOKEN" ]; then
+            printf '%s' "$TP_TOKEN" | npx wrangler secret put TRAVELPAYOUTS_TOKEN --name olhodetandera
+            printf '%s' "$TP_MARKER" | npx wrangler secret put TRAVELPAYOUTS_MARKER --name olhodetandera
+          else
+            echo "Travelpayouts ausente — Worker segue com ofertas demo"
+          fi
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || secrets.CLOUDFLARE_ID }}
+          TP_TOKEN: ${{ secrets.TRAVELPAYOUTS_TOKEN }}
+          TP_MARKER: ${{ secrets.TRAVELPAYOUTS_MARKER }}
+      - name: Deploy no Cloudflare Workers
+        run: npx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || secrets.CLOUDFLARE_ID }}

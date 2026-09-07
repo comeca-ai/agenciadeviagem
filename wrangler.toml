@@ -1,14 +1,33 @@
-# Olho de Tandera — Cloudflare Pages
+# Olho de Tandera — Cloudflare Worker + Static Assets
 name = "olhodetandera"
+account_id = "749b2e9b3642e4b03321d5830e81c195"
+main = "worker/index.js"
 compatibility_date = "2026-09-07"
-pages_build_output_dir = "dist"
+workers_dev = true
+minify = true
+keep_vars = true
 
-# Banco SQLite da Cloudflare (D1) — autenticação + alertas de preço (v2)
-# Crie com: npx wrangler d1 create olhodetandera
-# e cole o database_id retornado abaixo. No Pages, o binding DB também pode
-# ser configurado em Settings → Functions → D1 database bindings.
+[placement]
+mode = "smart"
+
+[observability]
+enabled = true
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+
 [[d1_databases]]
 binding = "DB"
 database_name = "olhodetandera"
 database_id = "6add3cdc-47c1-4fc2-9cca-64fb664914b5"
 migrations_dir = "migrations"
+
+[[routes]]
+pattern = "olhodetandera.com"
+custom_domain = true
+
+[[routes]]
+pattern = "www.olhodetandera.com"
+custom_domain = true
