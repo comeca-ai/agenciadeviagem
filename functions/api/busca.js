@@ -10,7 +10,7 @@ const TP_BASE = "https://api.travelpayouts.com/aviasales/v3/prices_for_dates";
 const CACHE_TTL_S = 1800;
 
 const AVISO_COMPLIANCE =
-  "Preço por pessoa com taxas de embarque. Bagagem e regras da tarifa só no parceiro. Sujeito a alteração. A reserva é concluída no site do parceiro.";
+  "Preço por pessoa, taxas incluídas, sujeito a alteração sem aviso prévio. A reserva é concluída no site do parceiro.";
 
 function json(body, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(body), {
@@ -36,6 +36,7 @@ function linkAfiliado(link, marker) {
   return `https://www.aviasales.com${link}${sep}marker=${marker}`;
 }
 
+/** Nunca devolver token/marker em detalhe de erro. */
 function safeErr(e) {
   const raw = String((e && e.message) || e || "erro");
   return raw
