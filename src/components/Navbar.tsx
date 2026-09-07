@@ -19,7 +19,6 @@ export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Fecha o menu mobile ao trocar de rota (padrão "ajustar estado no render")
   const [prevPath, setPrevPath] = useState(location.pathname);
   if (prevPath !== location.pathname) {
     setPrevPath(location.pathname);
@@ -43,12 +42,11 @@ export default function Navbar() {
         className={cn(
           "fixed top-0 z-50 h-[4.5rem] w-full transition-[background-color,backdrop-filter,border-color] duration-350",
           scrolled || open
-            ? "border-b border-white/5 bg-[rgba(6,8,15,0.72)] backdrop-blur-[16px]"
+            ? "border-b border-mist/10 bg-[rgba(245,242,234,0.86)] backdrop-blur-[16px]"
             : "border-b border-transparent bg-transparent",
         )}
       >
         <div className="container-site flex h-full items-center justify-between gap-4">
-          {/* Logo */}
           <Link to="/" className="group flex items-center gap-3" aria-label="Olho de Tandera — início">
             <img
               src="/assets/logo.svg"
@@ -61,7 +59,6 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* Links (centro) */}
           <nav className="hidden items-center gap-8 md:flex" aria-label="Navegação principal">
             {LINKS.map((link) =>
               link.hash ? (
@@ -104,12 +101,11 @@ export default function Navbar() {
             )}
           </nav>
 
-          {/* CTA + hambúrguer */}
           <div className="flex items-center gap-3">
             <a
               href="/#busca"
               onClick={handleBusca}
-              className="sweep-hover hidden rounded-full bg-amber px-5 py-2.5 text-[0.9rem] font-bold text-ink transition-transform duration-250 hover:scale-[1.04] active:scale-[0.97] md:inline-block"
+              className="sweep-hover hidden rounded-full bg-amber px-5 py-2.5 text-[0.9rem] font-bold text-night transition-transform duration-250 hover:scale-[1.04] active:scale-[0.97] md:inline-block"
             >
               Buscar voos
             </a>
@@ -137,7 +133,6 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* Menu mobile overlay */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -150,7 +145,7 @@ export default function Navbar() {
             <img
               src="/assets/logo.svg"
               alt=""
-              className="pointer-events-none absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 opacity-[0.18] blur-[120px]"
+              className="pointer-events-none absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 opacity-[0.12] blur-[120px]"
             />
             {LINKS.map((link, i) => (
               <motion.div
@@ -183,7 +178,7 @@ export default function Navbar() {
               initial={{ y: 40, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.07 * LINKS.length, duration: 0.5 }}
-              className="mt-4 rounded-full bg-amber px-7 py-3 font-bold text-ink"
+              className="mt-4 rounded-full bg-amber px-7 py-3 font-bold text-night"
             >
               Buscar voos
             </motion.a>
