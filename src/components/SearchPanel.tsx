@@ -441,7 +441,7 @@ export default function SearchPanel({ initial, className }: SearchPanelProps) {
         <button
           type="submit"
           disabled={loading}
-          className="sweep-hover mt-7 flex h-[3.75rem] w-full items-center justify-center gap-3 rounded-2xl bg-amber font-display text-[1.2rem] font-semibold text-ink transition-[transform,box-shadow] duration-250 hover:scale-[1.01] hover:shadow-[0_0_60px_rgba(240,168,50,0.35)] active:scale-[0.99] disabled:cursor-wait"
+          className="sweep-hover mt-7 flex h-[3.75rem] w-full items-center justify-center gap-3 rounded-2xl bg-amber font-display text-[1.2rem] font-semibold text-night transition-[transform,box-shadow] duration-250 hover:scale-[1.01] hover:shadow-[0_0_60px_rgba(240,168,50,0.35)] active:scale-[0.99] disabled:cursor-wait"
         >
           {loading ? (
             <>
