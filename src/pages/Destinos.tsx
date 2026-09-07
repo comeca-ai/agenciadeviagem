@@ -1,14 +1,30 @@
+import { useEffect, useState } from "react";
+import HeroDestinos from "@/components/destinos/HeroDestinos";
+import FiltrosPerfil from "@/components/destinos/FiltrosPerfil";
+import DestaqueNoronha from "@/components/destinos/DestaqueNoronha";
+import GradeDestinos from "@/components/destinos/GradeDestinos";
+import BandaBusca from "@/components/destinos/BandaBusca";
+import type { Perfil } from "@/components/destinos/data";
+
 /**
- * Página Destinos (placeholder do scaffold — implementação completa
- * conforme destinos.md).
+ * Página Destinos — "O que o Olho encontrou" (/destinos).
+ * Hero editorial → filtros por perfil (sticky) → destaque parallax de
+ * Noronha → grade masonry editorial → banda "Não viu seu destino?".
  */
 export default function Destinos() {
+  const [perfil, setPerfil] = useState<Perfil>("Todos");
+
+  useEffect(() => {
+    document.title = "Destinos que o Olho encontrou | Olho de Tandera";
+  }, []);
+
   return (
-    <section className="container-site py-[clamp(5rem,12vh,9rem)]">
-      <p className="eyebrow mb-4 text-teal">Mapa de descobertas</p>
-      <h1 className="font-display text-[clamp(2.8rem,7vw,6rem)] font-medium leading-none text-mist">
-        O que o Olho <em className="text-iris-gradient italic">já encontrou.</em>
-      </h1>
-    </section>
+    <>
+      <HeroDestinos />
+      <FiltrosPerfil ativo={perfil} onChange={setPerfil} />
+      <DestaqueNoronha />
+      <GradeDestinos perfil={perfil} />
+      <BandaBusca />
+    </>
   );
 }
