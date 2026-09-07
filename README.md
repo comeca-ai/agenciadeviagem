@@ -1,9 +1,11 @@
 # Olho de Tandera
 
-Agência de viagens 100% digital — varre passagens e mostra preço final.  
+Busca de passagens. Mostra o preço que o parceiro devolve. Reserva fecha lá, não aqui.  
 **Live:** [olhodetandera.com](https://olhodetandera.com) · **Repo:** `comeca-ai/agenciadeviagem`
 
 Stack: Vite + React 19 + Tailwind · **Cloudflare Pages** + Pages Functions · **D1** · Travelpayouts.
+
+Sem `TRAVELPAYOUTS_TOKEN` / `TRAVELPAYOUTS_MARKER` no Cloudflare, `/api/busca` responde 503. A UI não inventa preço — mostra o erro.
 
 ## Local
 
@@ -32,12 +34,10 @@ Detalhes em [`DEPLOY.md`](./DEPLOY.md). Resumo:
 - Project Pages: `olhodetandera`
 - Functions: `/api/busca`, `/api/auth/*` (Workers na borda)
 - D1 binding: `DB` → `olhodetandera`
-- Secrets: `TRAVELPAYOUTS_TOKEN`, `TRAVELPAYOUTS_MARKER`
+- Secrets: `TRAVELPAYOUTS_TOKEN` , `TRAVELPAYOUTS_MARKER`
 
 CI (`.github/workflows/deploy.yml`): push em `main`/`master` → build → migrations → secrets → `wrangler pages deploy --branch=master`.
 
 ## v2
 
 Passagem Cloudflare (lazy routes/Hero canvas, chunks, `_headers`/`_redirects`): [`docs/v2-AUDIT.md`](./docs/v2-AUDIT.md).
-
-*O Olho de Tandera enxerga — quem voa é você.*
