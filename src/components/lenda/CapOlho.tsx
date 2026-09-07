@@ -178,14 +178,14 @@ export default function CapOlho() {
 
         {/* prova viva: mini-card de oferta real */}
         <div className="olho-card lg:col-span-3">
-          <div className="olho-card-inner overflow-hidden rounded-[1.25rem] border border-white/[0.07] bg-ink-3">
+          <div className="olho-card-inner overflow-hidden rounded-[1.25rem] border border-mist/10 bg-ink-3">
             <div className="relative h-32">
               <img
                 src="/assets/dest-cusco.jpg"
                 alt="Cusco, Peru"
                 className="h-full w-full object-cover"
               />
-              <span className="mono-data absolute left-3 top-3 rounded-full bg-amber px-2.5 py-1 text-[0.62rem] font-bold uppercase tracking-[0.12em] text-ink">
+              <span className="mono-data absolute left-3 top-3 rounded-full bg-amber px-2.5 py-1 text-[0.62rem] font-bold uppercase tracking-[0.12em] text-night">
                 Escolha do Olho
               </span>
             </div>
@@ -207,7 +207,7 @@ export default function CapOlho() {
               </p>
               <Link
                 to="/resultados?origem=GRU&destino=CUZ&ida=2026-09-07&volta=2026-09-15&pax=1"
-                className="sweep-hover mt-4 block rounded-full bg-amber py-2.5 text-center text-[0.85rem] font-bold text-ink transition-transform duration-250 hover:scale-[1.04] active:scale-[0.97]"
+                className="sweep-hover mt-4 block rounded-full bg-amber py-2.5 text-center text-[0.85rem] font-bold text-night transition-transform duration-250 hover:scale-[1.04] active:scale-[0.97]"
               >
                 Ver esta oferta
               </Link>
