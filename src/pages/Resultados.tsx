@@ -6,7 +6,6 @@ import { buildSearchUrl, parseSearchParams, type SearchParams } from "@/lib/sear
 import { goToBusca } from "@/lib/nav";
 import {
   demoBuscaResponse,
-  DEMO_BADGES,
   type BuscaResponse,
   type Oferta,
 } from "@/data/demo-ofertas";
@@ -132,9 +131,9 @@ export default function Resultados() {
     return list;
   }, [resposta, filtros]);
 
-  // Selos: demo usa o mapa fixo; dados reais marcam o mais barato e o 1º da lista
+  // Selos: 1º da lista é a Escolha do Olho; o mais barato leva "Menor preço"
+  // (vale para dados reais e demo — o gerador demo já devolve a escolha em 1º)
   const badgeDe = (o: Oferta): "Escolha do Olho" | "Menor preço" | undefined => {
-    if (isDemo) return DEMO_BADGES[o.id];
     if (!resposta || resposta.ofertas.length === 0) return undefined;
     if (resposta.ofertas[0].id === o.id) return "Escolha do Olho";
     const menor = resposta.ofertas.reduce((a, b) => (b.preco < a.preco ? b : a));
