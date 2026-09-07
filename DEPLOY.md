@@ -1,6 +1,24 @@
 # Deploy — Olho de Tandera (100% Cloudflare)
 
-> olhodetandera.com · Pages (site) + Pages Functions (`/api/busca`) · custo: R$ 0/mês no plano Free
+> olhodetandera.com · Pages (site) + Pages Functions (`/api/busca`, `/api/auth/*`) · custo: R$ 0/mês no plano Free
+
+**Importante:** os arquivos da pasta `functions/` **são Workers** — a Cloudflare os compila e executa na borda automaticamente no deploy do Pages. Não é preciso criar Workers separados.
+
+## 0. Caminho rápido — deploy direto via Wrangler (sem GitHub)
+
+Com o código na sua máquina, são 5 comandos para colocar os Workers no ar:
+
+```bash
+npx wrangler login                              # autoriza sua conta Cloudflare no browser
+npx wrangler d1 create olhodetandera            # cria o banco → copie o database_id pro wrangler.toml
+npx wrangler d1 migrations apply olhodetandera --remote
+npm install && npm run build
+npx wrangler pages deploy dist --project-name=olhodetandera
+```
+
+Pronto: site + Workers `/api/busca` e `/api/auth/*` no ar em `olhodetandera.pages.dev`. Depois configure os Secrets (seção 4), o binding D1 no Pages (seção 6) e o domínio (seções 2 e 3.4).
+
+O caminho via GitHub (seções 1–3) dá deploy automático a cada push — recomendado para o dia a dia; o caminho Wrangler acima é o atalho para subir agora.
 
 ## 1. Pré-requisitos (15 min)
 
