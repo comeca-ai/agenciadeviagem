@@ -2,11 +2,14 @@
  * POST /api/auth/register — cria conta (portão +18 da marca)
  * Body: { nome, email, senha, maior18: true }
  */
-import { json, semDB, hashSenha, criarSessao, cookieSessao, validaCadastro } from "./_utils.js";
+import { json, semDB, hashSenha, criarSessao, cookieSessao, validaCadastro, rateLimit } from "./_utils.js";
 
 export async function onRequestPost(context) {
   const { request, env } = context;
   if (!env.DB) return semDB();
+
+  const rl = await rateLimit(request, "auth-register", { limit: 5, windowS: 300 });
+  if (!rl.ok) return rl.response;
 
   let body;
   try {
