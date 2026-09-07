@@ -1,0 +1,4 @@
+# Copie para .dev.vars (nunca comite o .dev.vars real)
+# Pegue token e marker em https://www.travelpayouts.com (cadastro gratuito)
+TRAVELPAYOUTS_TOKEN=seu_token_aqui
+TRAVELPAYOUTS_MARKER=seu_marker_aqui
