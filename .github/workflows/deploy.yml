@@ -24,17 +24,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # pnpm no CI: o npm ci quebra no runner com "Exit handler never called".
+      # O pnpm-lock.yaml é gerado a partir do package-lock.json (mesmas versões).
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: pnpm
 
       - name: Instalar dependências
-        # --ignore-scripts: o postinstall do esbuild enforca o npm no runner
-        # (bug "Exit handler never called"); o build não precisa dele
-        run: npm ci --ignore-scripts --no-audit --no-fund
+        run: pnpm install --frozen-lockfile
 
       - name: Build (Vite → dist/)
-        run: npm run build
+        run: pnpm build
 
       - name: Aplicar migrations no D1
         run: npx wrangler d1 migrations apply olhodetandera --remote
