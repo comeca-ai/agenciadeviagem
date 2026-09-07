@@ -30,7 +30,7 @@ jobs:
           cache: npm
 
       - name: Instalar dependências
-        run: npm ci
+        run: npm ci --no-audit --no-fund || npm ci --no-audit --no-fund
 
       - name: Build (Vite → dist/)
         run: npm run build
