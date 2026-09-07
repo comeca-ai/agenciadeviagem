@@ -33,7 +33,7 @@ function DestinoCard({ destino, index }: { destino: Destino; index: number }) {
         <Link
           to={destino.url}
           aria-label={`Ver voos para ${destino.nome}`}
-          className="sweep-hover group relative block overflow-hidden rounded-[1.25rem] border border-[rgba(237,235,228,0.07)] transition-[transform,border-color] duration-350 hover:-translate-y-1.5 hover:border-[rgba(240,168,50,0.35)]"
+          className="sweep-hover group relative block overflow-hidden rounded-[1.25rem] border border-mist/15 transition-[transform,border-color] duration-350 hover:-translate-y-1.5 hover:border-amber/60"
           style={{ transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)" }}
         >
           <div className={cn("relative overflow-hidden", aspect)}>
@@ -48,7 +48,7 @@ function DestinoCard({ destino, index }: { destino: Destino; index: number }) {
               }}
             />
             {/* Overlay inferior gradiente ink */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[rgba(6,8,15,0.92)] via-[rgba(6,8,15,0.25)] to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[rgba(11,15,26,0.86)] via-[rgba(11,15,26,0.28)] to-transparent" />
 
             {/* Íris mini que "pisca" no hover */}
             <img
@@ -66,7 +66,7 @@ function DestinoCard({ destino, index }: { destino: Destino; index: number }) {
                 {destino.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="rounded-full bg-ink/60 px-2.5 py-1 text-[0.65rem] font-medium uppercase tracking-[0.1em] text-mist backdrop-blur-sm"
+                    className="rounded-full bg-night/65 px-2.5 py-1 text-[0.65rem] font-medium uppercase tracking-[0.1em] text-ink backdrop-blur-sm"
                   >
                     {tag}
                   </span>
@@ -112,15 +112,23 @@ function DestinoCard({ destino, index }: { destino: Destino; index: number }) {
 /**
  * Seção 4 — Grade masonry editorial dos 7 destinos, filtrável por perfil.
  */
-export default function GradeDestinos({ perfil }: { perfil: Perfil }) {
+export default function GradeDestinos({
+  perfil,
+  origem,
+}: {
+  perfil: Perfil;
+  origem: string;
+}) {
   const gridRef = useRef<HTMLDivElement>(null);
 
   const filtrados = useMemo(
     () =>
-      perfil === "Todos"
-        ? DESTINOS
-        : DESTINOS.filter((d) => d.tags.includes(perfil)),
-    [perfil],
+      DESTINOS.filter((d) => {
+        const batePerfil = perfil === "Todos" || d.tags.includes(perfil);
+        const bateOrigem = origem === "todas" || d.rota.origem === origem;
+        return batePerfil && bateOrigem;
+      }),
+    [origem, perfil],
   );
 
   // Entrada em batch + parallax dessincronizado dos cards pares.
@@ -168,15 +176,15 @@ export default function GradeDestinos({ perfil }: { perfil: Perfil }) {
   }, [filtrados]);
 
   return (
-    <section className="bg-ink py-[clamp(4rem,10vh,7rem)]">
+    <section className="bg-ink py-[clamp(3rem,8vh,6rem)]">
       <div ref={gridRef} className="container-site">
         {filtrados.length === 0 ? (
           <p className="py-16 text-center text-mist-dim">
-            Nenhum destino deste perfil esta semana — mas o Olho continua
-            varrendo.
+            Nenhuma rota disponível para esse recorte agora. Ajuste o perfil ou
+            a origem para ampliar a varredura.
           </p>
         ) : (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-12 md:gap-8">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-12 md:gap-6">
             {filtrados.map((destino, i) => (
               <DestinoCard key={destino.nome} destino={destino} index={i} />
             ))}

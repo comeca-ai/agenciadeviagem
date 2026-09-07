@@ -6,13 +6,22 @@ import { PERFIS, type Perfil } from "./data";
 interface FiltrosPerfilProps {
   ativo: Perfil;
   onChange: (perfil: Perfil) => void;
+  origemAtiva: string;
+  origensDisponiveis: string[];
+  onOrigemChange: (origem: string) => void;
 }
 
 /**
  * Seção 2 — Barra sticky de filtros por perfil (chips horizontais
  * scrolláveis). Chip ativo: fundo âmbar / texto night (contraste no tema claro).
  */
-export default function FiltrosPerfil({ ativo, onChange }: FiltrosPerfilProps) {
+export default function FiltrosPerfil({
+  ativo,
+  onChange,
+  origemAtiva,
+  origensDisponiveis,
+  onOrigemChange,
+}: FiltrosPerfilProps) {
   const barRef = useRef<HTMLDivElement>(null);
 
   // Barra desliza de y -20 → 0 ao sair do hero
@@ -35,13 +44,9 @@ export default function FiltrosPerfil({ ativo, onChange }: FiltrosPerfilProps) {
   }, []);
 
   return (
-    <div className="sticky top-[4.5rem] z-30 border-b border-mist/10 bg-ink/75 backdrop-blur-[16px]">
+    <div className="sticky top-[4.25rem] z-30 border-b border-mist/10 bg-ink/90 backdrop-blur-[16px]">
       <div ref={barRef} className="container-site">
-        <div
-          className="scroller-thin flex gap-2.5 overflow-x-auto py-4"
-          role="group"
-          aria-label="Filtrar destinos por perfil"
-        >
+        <div className="scroller-thin flex gap-2.5 overflow-x-auto pb-2 pt-4" role="group" aria-label="Filtrar destinos por perfil">
           {PERFIS.map((perfil) => {
             const ativoChip = perfil === ativo;
             return (
@@ -58,6 +63,40 @@ export default function FiltrosPerfil({ ativo, onChange }: FiltrosPerfilProps) {
                 )}
               >
                 {perfil}
+              </button>
+            );
+          })}
+        </div>
+        <div className="scroller-thin flex gap-2.5 overflow-x-auto pb-4 pt-2" role="group" aria-label="Filtrar destinos por aeroporto de origem">
+          <button
+            type="button"
+            onClick={() => onOrigemChange("todas")}
+            aria-pressed={origemAtiva === "todas"}
+            className={cn(
+              "shrink-0 rounded-full border px-3.5 py-1.5 text-[0.75rem] font-medium transition-[background-color,border-color,color] duration-250",
+              origemAtiva === "todas"
+                ? "border-teal bg-teal/10 text-mist"
+                : "border-mist/20 bg-transparent text-mist-dim hover:border-teal hover:text-mist",
+            )}
+          >
+            Todas as origens
+          </button>
+          {origensDisponiveis.map((origem) => {
+            const ativoChip = origem === origemAtiva;
+            return (
+              <button
+                key={origem}
+                type="button"
+                onClick={() => onOrigemChange(origem)}
+                aria-pressed={ativoChip}
+                className={cn(
+                  "mono-data shrink-0 rounded-full border px-3.5 py-1.5 text-[0.75rem] font-medium transition-[background-color,border-color,color] duration-250",
+                  ativoChip
+                    ? "border-teal bg-teal/10 text-mist"
+                    : "border-mist/20 bg-transparent text-mist-dim hover:border-teal hover:text-mist",
+                )}
+              >
+                {origem}
               </button>
             );
           })}

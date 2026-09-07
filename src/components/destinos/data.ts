@@ -2,6 +2,7 @@
 
 export type Perfil =
   | "Todos"
+  | "LatAm"
   | "Praia"
   | "Cidade"
   | "Aventura"
@@ -11,6 +12,7 @@ export type Perfil =
 
 export const PERFIS: Perfil[] = [
   "Todos",
+  "LatAm",
   "Praia",
   "Cidade",
   "Aventura",
@@ -56,7 +58,7 @@ export const DESTINOS: Destino[] = [
     imagem: "/assets/dest-rio.jpg",
     rota: { origem: "GRU", destino: "SDU" },
     preco: 312,
-    tags: ["Praia", "Só Brasil"],
+    tags: ["LatAm", "Praia", "Só Brasil"],
     frase: "A curva mais famosa do mundo, vista de cima.",
     url: resultadosUrl("GRU", "SDU", "2026-04-10", "2026-04-14"),
   },
@@ -83,7 +85,7 @@ export const DESTINOS: Destino[] = [
     imagem: "/assets/dest-patagonia.jpg",
     rota: { origem: "GRU", destino: "FTE" },
     preco: 2640,
-    tags: ["Aventura", "Internacional"],
+    tags: ["LatAm", "Aventura", "Internacional"],
     frase: "Gelo que range há 20 mil anos. Ouça de perto.",
     url: resultadosUrl("GRU", "FTE", "2026-11-06", "2026-11-16"),
   },
@@ -110,11 +112,23 @@ export const DESTINOS: Destino[] = [
     imagem: "/assets/dest-cusco.jpg",
     rota: { origem: "CWB", destino: "CUZ" },
     preco: 2150,
-    tags: ["Aventura", "Cultura", "Internacional"],
+    tags: ["LatAm", "Aventura", "Cultura", "Internacional"],
     frase: "Ruínas acima das nuvens. O vigia viu primeiro.",
     url: resultadosUrl("CWB", "CUZ", "2026-09-07", "2026-09-15"),
   },
 ];
+
+export const HUBS_BR_REFERENCIA = ["GRU", "GIG", "BSB", "CNF", "REC"] as const;
+
+const origensUnicas = new Set([
+  DESTAQUE_NORONHA.rota.origem,
+  ...DESTINOS.map((destino) => destino.rota.origem),
+]);
+
+/** Hubs brasileiros disponíveis no catálogo atual de Destinos. */
+export const HUBS_BR_DISPONIVEIS = HUBS_BR_REFERENCIA.filter((hub) =>
+  origensUnicas.has(hub),
+);
 
 const brl = new Intl.NumberFormat("pt-BR", {
   style: "currency",
