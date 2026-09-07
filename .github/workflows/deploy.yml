@@ -47,10 +47,16 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
-      - name: Configurar secrets do Travelpayouts no Pages
+      - name: Configurar secrets do Travelpayouts no Pages (se existirem)
         run: |
-          echo "${{ secrets.TRAVELPAYOUTS_TOKEN }}" | npx wrangler pages secret put TRAVELPAYOUTS_TOKEN --project-name=olhodetandera
-          echo "${{ secrets.TRAVELPAYOUTS_MARKER }}" | npx wrangler pages secret put TRAVELPAYOUTS_MARKER --project-name=olhodetandera
+          if [ -n "$TP_TOKEN" ]; then
+            echo "$TP_TOKEN" | npx wrangler pages secret put TRAVELPAYOUTS_TOKEN --project-name=olhodetandera
+            echo "$TP_MARKER" | npx wrangler pages secret put TRAVELPAYOUTS_MARKER --project-name=olhodetandera
+          else
+            echo "TRAVELPAYOUTS_TOKEN ausente — pulando (site segue com ofertas demo)"
+          fi
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          TP_TOKEN: ${{ secrets.TRAVELPAYOUTS_TOKEN }}
+          TP_MARKER: ${{ secrets.TRAVELPAYOUTS_MARKER }}
