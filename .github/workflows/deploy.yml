@@ -47,12 +47,7 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || secrets.CLOUDFLARE_ID }}
 
-      - name: Deploy no Cloudflare Pages (site + Workers)
-        run: npx wrangler pages deploy dist --project-name=olhodetandera
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || secrets.CLOUDFLARE_ID }}
-
+      # Secrets ANTES do deploy: no Pages, secret só vale para o deploy seguinte
       - name: Configurar secrets do Travelpayouts no Pages (se existirem)
         run: |
           if [ -n "$TP_TOKEN" ]; then
@@ -66,3 +61,9 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || secrets.CLOUDFLARE_ID }}
           TP_TOKEN: ${{ secrets.TRAVELPAYOUTS_TOKEN }}
           TP_MARKER: ${{ secrets.TRAVELPAYOUTS_MARKER }}
+
+      - name: Deploy no Cloudflare Pages (site + Workers)
+        run: npx wrangler pages deploy dist --project-name=olhodetandera
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || secrets.CLOUDFLARE_ID }}
