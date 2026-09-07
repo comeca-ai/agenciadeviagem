@@ -84,12 +84,12 @@ export default function HeroDestinos() {
             </span>
           ))}
         </h1>
-        <p className="dest-hero-fade mt-6 max-w-[32rem] text-[1.125rem] leading-[1.65] text-mist-dim">
-          Oito lugares que o vigia marcou no mapa — com o menor preço que ele
-          viu nas últimas semanas.
+        <p className="dest-hero-fade mt-6 max-w-[36rem] text-[1.125rem] leading-[1.65] text-mist-dim">
+          Recortes para viajar pela América Latina saindo do Brasil, com foco
+          em rotas que costumam partir dos principais hubs nacionais.
         </p>
         <p className="dest-hero-fade mono-data mt-6 text-[0.8rem] text-teal">
-          8 destinos · 4 continentes · atualizado esta semana
+          Curadoria editorial · sem promessa de preço em tempo real
         </p>
       </div>
     </section>

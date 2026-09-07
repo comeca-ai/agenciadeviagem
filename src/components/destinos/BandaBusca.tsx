@@ -76,8 +76,9 @@ export default function BandaBusca() {
           ))}
         </h3>
         <p className="banda-corpo mt-6 max-w-[36rem] text-[1.05rem] leading-[1.65] text-mist-dim">
-          Estes são só os favoritos da semana. Busque qualquer rota — se existe
-          passagem, o Olho enxerga.
+          Estes são só recortes editoriais. Na busca, mostramos disponibilidade
+          real quando a API responde — e avisamos quando a rota estiver sem
+          retorno.
         </p>
         <div className="banda-cta mt-10">
           <a

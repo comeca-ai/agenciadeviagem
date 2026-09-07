@@ -66,7 +66,7 @@ export default function DestaqueNoronha() {
   return (
     <section
       ref={sectionRef}
-      className="relative flex h-[90vh] items-end overflow-hidden"
+      className="relative flex min-h-[72vh] items-end overflow-hidden md:h-[90vh]"
       aria-label="Destino em destaque: Fernando de Noronha"
     >
       {/* Fundo com parallax (scale 1.2 para margem de movimento) */}
@@ -81,7 +81,7 @@ export default function DestaqueNoronha() {
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(0deg, rgba(245,242,234,.9) 0%, transparent 55%)",
+            "linear-gradient(0deg, rgba(11,15,26,.72) 0%, rgba(11,15,26,.2) 35%, transparent 62%)",
         }}
         aria-hidden="true"
       />
@@ -92,7 +92,7 @@ export default function DestaqueNoronha() {
       </span>
 
       <div className="container-site relative z-10 pb-[clamp(3.5rem,9vh,6rem)]">
-        <div className="max-w-[40rem]">
+        <div className="max-w-[40rem] rounded-3xl border border-ink/25 bg-night/25 p-5 backdrop-blur-[2px] md:p-7">
           <h2 className="noronha-item font-display text-[clamp(2.2rem,4.5vw,3.75rem)] font-medium leading-[1.02] text-mist">
             Fernando de Noronha
           </h2>

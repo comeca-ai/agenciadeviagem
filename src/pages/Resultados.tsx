@@ -5,7 +5,6 @@ import { ListFilter } from "lucide-react";
 import { buildSearchUrl, parseSearchParams, type SearchParams } from "@/lib/search";
 import { goToBusca } from "@/lib/nav";
 import {
-  demoBuscaResponse,
   type BuscaResponse,
   type Oferta,
 } from "@/data/demo-ofertas";
@@ -47,6 +46,7 @@ export default function Resultados() {
 
   const [fase, setFase] = useState<"scan" | "done">("scan");
   const [resposta, setResposta] = useState<BuscaResponse | null>(null);
+  const [erroBusca, setErroBusca] = useState<string | null>(null);
   const [isDemo, setIsDemo] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -63,10 +63,11 @@ export default function Resultados() {
     };
   }, [params.origem, params.destino]);
 
-  // Busca real com fallback silencioso para os dados de demonstração
+  // Busca real: erro da API é exibido de forma explícita (sem fallback oculto)
   useEffect(() => {
     let vivo = true;
     setFase("scan");
+    setErroBusca(null);
     setEditOpen(false);
     setSheetOpen(false);
 
@@ -82,28 +83,32 @@ export default function Resultados() {
     });
     if (params.volta) q.set("volta", params.volta);
 
-    const demo = () =>
-      demoBuscaResponse({
-        origem: params.origem,
-        destino: params.destino,
-        ida: params.ida,
-        volta: params.volta ?? null,
-        pax: params.pax,
-      });
-
     fetch(`/api/busca?${q.toString()}`)
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json() as Promise<BuscaResponse>;
       })
-      .then((d) => ({ d, demo: false }))
-      .catch(() => ({ d: demo(), demo: true }))
-      .then(({ d, demo: ehDemo }) => {
+      .then((d) => ({ d, erro: null as string | null }))
+      .catch((erro: unknown) => ({
+        d: null,
+        erro:
+          erro instanceof Error && erro.message.startsWith("HTTP")
+            ? `Não foi possível buscar ofertas agora (${erro.message}).`
+            : "Não foi possível buscar ofertas agora. Tente novamente em instantes.",
+      }))
+      .then(({ d, erro }) => {
         const espera = Math.max(0, minMs - (performance.now() - t0));
         setTimeout(() => {
           if (!vivo) return;
-          setResposta(d);
-          setIsDemo(ehDemo);
+          setErroBusca(erro);
+          if (d) {
+            const ofertas = Array.isArray(d.ofertas) ? d.ofertas : [];
+            setResposta({ ...d, ofertas, total: ofertas.length });
+            setIsDemo(d.fonte === "demo");
+          } else {
+            setResposta(null);
+            setIsDemo(false);
+          }
           setFase("done");
         }, espera);
       });
@@ -141,6 +146,12 @@ export default function Resultados() {
   };
 
   const ativos = contarFiltrosAtivos(filtros);
+  const semOfertasNaFonte = !!resposta && resposta.ofertas.length === 0;
+  const vazioPorFiltro =
+    fase === "done" &&
+    !erroBusca &&
+    !semOfertasNaFonte &&
+    visiveis.length === 0;
 
   const sugestoes: { label: string; url: string }[] = [
     {
@@ -181,32 +192,60 @@ export default function Resultados() {
 
           {/* Lista */}
           <div className="min-w-0">
-            <div className="mono-data mb-5 flex items-center gap-2 text-[0.8rem] text-mist-dim">
-              <motion.span
-                animate={{ opacity: [1, 0.25, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="h-1.5 w-1.5 rounded-full bg-teal"
-                aria-hidden="true"
-              />
-              <AnimatePresence mode="popLayout" initial={false}>
+            {!erroBusca && (
+              <div className="mono-data mb-5 flex items-center gap-2 text-[0.8rem] text-mist-dim">
                 <motion.span
-                  key={visiveis.length}
-                  initial={{ y: 10, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: -10, opacity: 0 }}
-                  transition={{ duration: 0.25 }}
-                  className="inline-block"
-                >
-                  {visiveis.length}
-                </motion.span>
-              </AnimatePresence>
-              <span>
-                {visiveis.length === 1 ? "oferta vista" : "ofertas vistas"} pelo Olho · atualizado
-                agora
-              </span>
-            </div>
+                  animate={{ opacity: [1, 0.25, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="h-1.5 w-1.5 rounded-full bg-teal"
+                  aria-hidden="true"
+                />
+                <AnimatePresence mode="popLayout" initial={false}>
+                  <motion.span
+                    key={visiveis.length}
+                    initial={{ y: 10, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: -10, opacity: 0 }}
+                    transition={{ duration: 0.25 }}
+                    className="inline-block"
+                  >
+                    {visiveis.length}
+                  </motion.span>
+                </AnimatePresence>
+                <span>
+                  {visiveis.length === 1 ? "oferta vista" : "ofertas vistas"} pelo Olho · atualizado
+                  agora
+                </span>
+              </div>
+            )}
 
-            {visiveis.length === 0 && fase === "done" ? (
+            {erroBusca ? (
+              <div className="rounded-[1.25rem] border border-ember/35 bg-ink-3 px-6 py-8 text-center">
+                <p className="font-medium text-mist">{erroBusca}</p>
+                <p className="mono-data mt-2 text-[0.75rem] text-mist-dim">
+                  Sem fallback de preços simulados: mostramos apenas o retorno da API.
+                </p>
+                <a
+                  href="/#busca"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    goToBusca(location.pathname, navigate);
+                  }}
+                  className="sweep-hover mt-5 inline-block rounded-full bg-amber px-5 py-2.5 text-[0.85rem] font-bold text-night"
+                >
+                  Voltar para a busca
+                </a>
+              </div>
+            ) : semOfertasNaFonte ? (
+              <div className="rounded-[1.25rem] border border-mist/15 bg-ink-3 px-6 py-10 text-center">
+                <p className="font-medium text-mist">
+                  Ainda não há ofertas publicadas para essa rota.
+                </p>
+                <p className="mono-data mt-2 text-[0.75rem] text-mist-dim">
+                  Tente outras datas ou aeroportos próximos.
+                </p>
+              </div>
+            ) : vazioPorFiltro ? (
               <EmptyState onLimpar={() => setFiltros({ ...FILTROS_INICIAIS })} />
             ) : (
               <div className="flex flex-col gap-5">
