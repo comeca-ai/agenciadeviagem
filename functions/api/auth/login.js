@@ -2,11 +2,14 @@
  * POST /api/auth/login
  * Body: { email, senha }
  */
-import { json, semDB, verificaSenha, criarSessao, cookieSessao } from "./_utils.js";
+import { json, semDB, verificaSenha, criarSessao, cookieSessao, rateLimit } from "./_utils.js";
 
 export async function onRequestPost(context) {
   const { request, env } = context;
   if (!env.DB) return semDB();
+
+  const rl = await rateLimit(request, "auth-login", { limit: 10, windowS: 60 });
+  if (!rl.ok) return rl.response;
 
   let body;
   try {
@@ -23,12 +26,10 @@ export async function onRequestPost(context) {
     "SELECT id, nome, email, senha_hash, senha_salt FROM users WHERE email = ?"
   ).bind(email).first();
 
-  // mesma resposta para "não existe" e "senha errada" — não vazar qual dos dois falhou
   if (!user || !(await verificaSenha(senha, user.senha_salt, user.senha_hash))) {
     return json({ erro: "credenciais_invalidas", detalhe: "E-mail ou senha incorretos." }, 401);
   }
 
-  // limpeza oportunista de sessões vencidas
   context.waitUntil(env.DB.prepare("DELETE FROM sessions WHERE expira_em < datetime('now')").run());
 
   const token = await criarSessao(env.DB, user.id);

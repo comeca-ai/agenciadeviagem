@@ -2,16 +2,12 @@
  * Olho de Tandera — Pages Function: GET /api/busca
  *
  * Proxy server-side para a Data API do Travelpayouts (Aviasales).
- * O token e o marker de afiliado ficam em Secrets da Cloudflare —
- * nunca chegam ao navegador (resolve CORS e protege as credenciais).
- *
- * Query params: origem=GRU&destino=LIS&ida=YYYY-MM-DD&volta=YYYY-MM-DD&pax=1
- * Resposta: { fonte, ofertas[], aviso } — contrato consumido por /resultados.
- * Sem segredos configurados, responde 503 e o frontend cai nos dados demo.
+ * Token/marker só em Secrets — nunca no browser.
+ * Erros nunca ecoam a URL com token.
  */
 
 const TP_BASE = "https://api.travelpayouts.com/aviasales/v3/prices_for_dates";
-const CACHE_TTL_S = 1800; // 30 min — tarifas aéreas expiram rápido
+const CACHE_TTL_S = 1800;
 
 const AVISO_COMPLIANCE =
   "Preço por pessoa, taxas incluídas, sujeito a alteração sem aviso prévio. A reserva é concluída no site do parceiro.";
@@ -36,9 +32,17 @@ function isDate(v) {
 }
 
 function linkAfiliado(link, marker) {
-  // A API retorna o path de busca da Aviasales; o marker converte em comissão.
   const sep = link.includes("?") ? "&" : "?";
   return `https://www.aviasales.com${link}${sep}marker=${marker}`;
+}
+
+/** Nunca devolver token/marker em detalhe de erro. */
+function safeErr(e) {
+  const raw = String((e && e.message) || e || "erro");
+  return raw
+    .replace(/token=[^&\s]+/gi, "token=REDACTED")
+    .replace(/TRAVELPAYOUTS_[A-Z_]+=\S+/gi, "SECRET=REDACTED")
+    .slice(0, 180);
 }
 
 export async function onRequestGet(context) {
@@ -64,11 +68,9 @@ export async function onRequestGet(context) {
   const token = env.TRAVELPAYOUTS_TOKEN;
   const marker = env.TRAVELPAYOUTS_MARKER;
   if (!token || !marker) {
-    // Sem segredos: o frontend exibe os dados de demonstração.
     return json({ erro: "sem_credenciais", detalhe: "Configure TRAVELPAYOUTS_TOKEN e TRAVELPAYOUTS_MARKER." }, 503);
   }
 
-  // Cache API — a borda da Cloudflare segura tarifas repetidas por 30 min.
   const cacheKey = new Request(
     `https://cache.olhodetandera.internal/api/busca?origem=${origem}&destino=${destino}&ida=${ida}&volta=${volta}&pax=${pax}`
   );
@@ -97,14 +99,14 @@ export async function onRequestGet(context) {
   try {
     const resp = await fetch(tp.toString(), {
       headers: { accept: "application/json" },
-      signal: AbortSignal.timeout(8000), // API externa pode demorar; não pendurar o usuário
+      signal: AbortSignal.timeout(8000),
     });
     if (!resp.ok) {
       return json({ erro: "provedor_indisponivel", status_provedor: resp.status }, 502);
     }
     data = await resp.json();
   } catch (e) {
-    return json({ erro: "timeout_ou_rede", detalhe: String(e && e.message || e) }, 502);
+    return json({ erro: "timeout_ou_rede", detalhe: safeErr(e) }, 502);
   }
 
   const ofertas = (data.data || []).map((item, i) => ({
