@@ -18,7 +18,19 @@ npx wrangler pages deploy dist --project-name=olhodetandera
 
 Pronto: site + Workers `/api/busca` e `/api/auth/*` no ar em `olhodetandera.pages.dev`. Depois configure os Secrets (seção 4), o binding D1 no Pages (seção 6) e o domínio (seções 2 e 3.4).
 
-O caminho via GitHub (seções 1–3) dá deploy automático a cada push — recomendado para o dia a dia; o caminho Wrangler acima é o atalho para subir agora.
+## 0b. Piloto automático — GitHub Actions (deploy a cada push, usando seus secrets)
+
+O repo já traz `.github/workflows/deploy.yml`: a cada push na branch principal, o GitHub Actions faz build, aplica as migrations do D1, sobe o site + Workers no Pages e grava os secrets do Travelpayouts — **sem nenhum token passar por terceiros** (os secrets do GitHub só existem dentro da execução do workflow).
+
+Configuração única (10 min):
+
+1. **GitHub → Settings → Secrets and variables → Actions → New repository secret**, crie 4:
+   - `CLOUDFLARE_API_TOKEN` — em dash.cloudflare.com → My Profile → API Tokens → template **"Edit Cloudflare Workers"**
+   - `CLOUDFLARE_ACCOUNT_ID` — barra lateral direita do dashboard Cloudflare
+   - `TRAVELPAYOUTS_TOKEN` e `TRAVELPAYOUTS_MARKER` — painel travelpayouts.com
+2. **Crie o banco D1 uma única vez**: dash.cloudflare.com → Workers & Pages → **D1** → Create database → nome `olhodetandera`.
+3. **Faça push** do código para `main` (ou `master`) → a aba **Actions** mostra o deploy acontecendo.
+4. No projeto Pages que surgir: **Settings → Functions → D1 database bindings** → binding `DB` → banco `olhodetandera`. Pronto — auth e busca reais no ar.
 
 ## 1. Pré-requisitos (15 min)
 
