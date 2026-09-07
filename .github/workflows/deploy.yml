@@ -68,7 +68,7 @@ jobs:
           TP_MARKER: ${{ secrets.TRAVELPAYOUTS_MARKER }}
 
       - name: Deploy no Cloudflare Pages (site + Workers)
-        run: npx wrangler pages deploy dist --project-name=olhodetandera
+        run: npx wrangler pages deploy dist --project-name=olhodetandera --branch=master
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || secrets.CLOUDFLARE_ID }}
