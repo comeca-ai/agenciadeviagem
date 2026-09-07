@@ -1,22 +1,34 @@
+import { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router";
 import Layout from "./components/Layout";
-import Home from "./pages/Home";
-import Resultados from "./pages/Resultados";
-import Destinos from "./pages/Destinos";
-import ALenda from "./pages/ALenda";
-import ComoFunciona from "./pages/ComoFunciona";
+
+const Home = lazy(() => import("./pages/Home"));
+const Resultados = lazy(() => import("./pages/Resultados"));
+const Destinos = lazy(() => import("./pages/Destinos"));
+const ALenda = lazy(() => import("./pages/ALenda"));
+const ComoFunciona = lazy(() => import("./pages/ComoFunciona"));
+
+function RouteFallback() {
+  return (
+    <div className="flex min-h-[40vh] items-center justify-center text-sm text-muted-foreground" aria-busy="true">
+      Carregando…
+    </div>
+  );
+}
 
 export default function App() {
   return (
-    <Routes>
-      <Route element={<Layout />}>
-        <Route index element={<Home />} />
-        <Route path="resultados" element={<Resultados />} />
-        <Route path="destinos" element={<Destinos />} />
-        <Route path="a-lenda" element={<ALenda />} />
-        <Route path="como-funciona" element={<ComoFunciona />} />
-        <Route path="*" element={<Home />} />
-      </Route>
-    </Routes>
+    <Suspense fallback={<RouteFallback />}>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path="resultados" element={<Resultados />} />
+          <Route path="destinos" element={<Destinos />} />
+          <Route path="a-lenda" element={<ALenda />} />
+          <Route path="como-funciona" element={<ComoFunciona />} />
+          <Route path="*" element={<Home />} />
+        </Route>
+      </Routes>
+    </Suspense>
   );
 }
