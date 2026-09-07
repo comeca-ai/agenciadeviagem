@@ -10,5 +10,5 @@ pages_build_output_dir = "dist"
 [[d1_databases]]
 binding = "DB"
 database_name = "olhodetandera"
-database_id = "PREENCHER_APOS_CRIAR"
+database_id = "6add3cdc-47c1-4fc2-9cca-64fb664914b5"
 migrations_dir = "migrations"
