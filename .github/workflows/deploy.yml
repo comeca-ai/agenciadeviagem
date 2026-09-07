@@ -28,11 +28,10 @@ jobs:
         with:
           node-version: 20
 
-      - name: npm estável (bug "Exit handler never called" afeta algumas versões)
-        run: npm install -g npm@10.9.2
-
       - name: Instalar dependências
-        run: npm ci --no-audit --no-fund
+        # --ignore-scripts: o postinstall do esbuild enforca o npm no runner
+        # (bug "Exit handler never called"); o build não precisa dele
+        run: npm ci --ignore-scripts --no-audit --no-fund
 
       - name: Build (Vite → dist/)
         run: npm run build
