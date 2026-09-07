@@ -7,7 +7,8 @@ import { goToBusca } from "@/lib/nav";
 const LINKS = [
   { label: "Buscar", to: "/#busca", hash: true },
   { label: "Destinos", to: "/destinos" },
-  { label: "Como funciona", to: "/como-funciona" },
+  { label: "A Lenda", to: "/a-lenda" },
+  { label: "Como Funciona", to: "/como-funciona" },
 ];
 
 export default function Navbar() {
@@ -18,6 +19,7 @@ export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Fecha o menu mobile ao trocar de rota (padrão "ajustar estado no render")
   const [prevPath, setPrevPath] = useState(location.pathname);
   if (prevPath !== location.pathname) {
     setPrevPath(location.pathname);
@@ -46,6 +48,7 @@ export default function Navbar() {
         )}
       >
         <div className="container-site flex h-full items-center justify-between gap-4">
+          {/* Logo */}
           <Link to="/" className="group flex items-center gap-3" aria-label="Olho de Tandera — início">
             <img
               src="/assets/logo.svg"
@@ -58,6 +61,7 @@ export default function Navbar() {
             </span>
           </Link>
 
+          {/* Links (centro) */}
           <nav className="hidden items-center gap-8 md:flex" aria-label="Navegação principal">
             {LINKS.map((link) =>
               link.hash ? (
@@ -100,6 +104,7 @@ export default function Navbar() {
             )}
           </nav>
 
+          {/* CTA + hambúrguer */}
           <div className="flex items-center gap-3">
             <a
               href="/#busca"
@@ -115,13 +120,24 @@ export default function Navbar() {
               aria-expanded={open}
               className="flex h-10 w-10 flex-col items-center justify-center gap-1.5 md:hidden"
             >
-              <span className={cn("h-px w-6 bg-mist transition-all duration-300", open && "translate-y-[3.5px] rotate-45")} />
-              <span className={cn("h-px w-6 bg-mist transition-all duration-300", open && "-translate-y-[3.5px] -rotate-45")} />
+              <span
+                className={cn(
+                  "h-px w-6 bg-mist transition-all duration-300",
+                  open && "translate-y-[3.5px] rotate-45",
+                )}
+              />
+              <span
+                className={cn(
+                  "h-px w-6 bg-mist transition-all duration-300",
+                  open && "-translate-y-[3.5px] -rotate-45",
+                )}
+              />
             </button>
           </div>
         </div>
       </header>
 
+      {/* Menu mobile overlay */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -144,11 +160,18 @@ export default function Navbar() {
                 transition={{ delay: 0.07 * i, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
               >
                 {link.hash ? (
-                  <a href="/#busca" onClick={handleBusca} className="font-display text-[clamp(2.5rem,10vw,4rem)] font-medium text-mist">
+                  <a
+                    href="/#busca"
+                    onClick={handleBusca}
+                    className="font-display text-[clamp(2.5rem,10vw,4rem)] font-medium text-mist"
+                  >
                     {link.label}
                   </a>
                 ) : (
-                  <Link to={link.to} className="font-display text-[clamp(2.5rem,10vw,4rem)] font-medium text-mist">
+                  <Link
+                    to={link.to}
+                    className="font-display text-[clamp(2.5rem,10vw,4rem)] font-medium text-mist"
+                  >
                     {link.label}
                   </Link>
                 )}
