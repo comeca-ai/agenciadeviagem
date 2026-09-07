@@ -38,6 +38,11 @@ jobs:
       - name: Instalar dependências
         run: pnpm install --frozen-lockfile
 
+      # Carimbo único por run: muda o conteúdo e força deployment NOVO,
+      # para que secrets recém-configurados sempre entrem em vigor
+      - name: Carimbo do deploy
+        run: echo "run ${{ github.run_id }} — $(date -u +%FT%TZ)" > public/deploy-id.txt
+
       - name: Build (Vite → dist/)
         run: pnpm build
 
