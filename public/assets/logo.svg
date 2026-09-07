@@ -1,0 +1,26 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="irisCore" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#F5C877"/>
+      <stop offset="30%" stop-color="#F0A832"/>
+      <stop offset="62%" stop-color="#E4572E"/>
+      <stop offset="72%" stop-color="#E4572E" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="pupil" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#06080F"/>
+      <stop offset="78%" stop-color="#06080F"/>
+      <stop offset="100%" stop-color="#06080F" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- anel externo fino -->
+  <circle cx="256" cy="256" r="236" stroke="#F0A832" stroke-opacity="0.5" stroke-width="6"/>
+  <!-- anel medio tracejado -->
+  <circle cx="256" cy="256" r="196" stroke="#F0A832" stroke-opacity="0.3" stroke-width="5" stroke-dasharray="10 22"/>
+  <!-- nucleo em gradiente iris -->
+  <circle cx="256" cy="256" r="160" fill="url(#irisCore)"/>
+  <!-- pupila -->
+  <circle cx="256" cy="256" r="74" fill="url(#pupil)"/>
+  <!-- reflexo teal a nordeste -->
+  <circle cx="312" cy="200" r="26" fill="#35C4B5" fill-opacity="0.9"/>
+  <circle cx="312" cy="200" r="40" fill="#35C4B5" fill-opacity="0.18"/>
+</svg>
