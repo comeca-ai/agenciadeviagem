@@ -1,6 +1,6 @@
 # Olho de Tandera — Cloudflare Pages
 name = "olhodetandera"
-compatibility_date = "2025-01-01"
+compatibility_date = "2026-09-07"
 pages_build_output_dir = "dist"
 
 # Banco SQLite da Cloudflare (D1) — autenticação + alertas de preço (v2)
