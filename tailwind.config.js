@@ -4,7 +4,21 @@ module.exports = {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      fontFamily: {
+        display: ["Fraunces", "serif"],
+        sans: ["'Space Grotesk'", "sans-serif"],
+        mono: ["'JetBrains Mono'", "monospace"],
+      },
       colors: {
+        ink: "#06080F",
+        "ink-2": "#0B101C",
+        "ink-3": "#141B2C",
+        mist: "#EDEBE4",
+        "mist-dim": "#98A0B3",
+        amber: "#F0A832",
+        ember: "#E4572E",
+        teal: "#35C4B5",
+        "gold-soft": "#F5C877",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -58,6 +72,12 @@ module.exports = {
       },
       boxShadow: {
         xs: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+      },
+      transitionDuration: {
+        250: "250ms",
+        350: "350ms",
+        400: "400ms",
+        800: "800ms",
       },
       keyframes: {
         "accordion-down": {
