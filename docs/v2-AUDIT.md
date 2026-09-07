@@ -8,41 +8,31 @@ Live (`main` / olhodetandera.com) **não muda** até merge explícito.
 - Vite SPA + React 19 + Tailwind 3
 - Cloudflare Pages + Pages Functions (`/api/busca`, `/api/auth/*`)
 - D1 (`olhodetandera`) + Travelpayouts secrets
-- CI: push `main`/`master` → build → D1 migrations → secrets → `wrangler pages deploy --branch=master`
+- CI deploy: push `main`/`master` → build → D1 → secrets → Pages `--branch=master`
 
-## Achados
-
-1. **Three.js / R3F / gsap / framer** no grafo — Hero e A Lenda puxam WebGL. Sem code-split, first paint das outras rotas paga o 3D.
-2. **`inspectAttr` no bundle de prod** — plugin de inspeção local no Vite.
-3. **`base: './'`** — pior para domínio custom no Pages; `/` é o path certo.
-4. **Sem `_headers` / `_redirects`** — assets sem cache longo; SPA sem fallback 200.
-5. **CI só deploy** — sem gate lint/typecheck em PR (workflow scope pode bloquear edição via API).
-6. **`--branch=master` no deploy** — de propósito (alias de produção no Pages); git default é `main`. Não mexer sem alinhar o dashboard.
-
-## Wins nesta passagem
+## Wins (passagem 1 + 2)
 
 | Win | Por quê |
 |---|---|
-| `React.lazy` nas rotas | Three/Nevoa fora do first paint de resultados/destinos/etc. |
-| `manualChunks` three/motion/framer | Cache CDN separado; menos JS inicial compartilhado |
-| Sem `inspectAttr` em production | Bundle menor, sem tooling de dev |
-| `base: "/"` | URLs corretas em olhodetandera.com |
-| `public/_headers` | Cache immutable em `/assets/*` + headers de segurança |
-| `public/_redirects` | Client routes SPA no Pages |
-| `compatibility_date` 2026-09-07 | Runtime Functions mais novo |
+| Lazy nas rotas | Three/Nevoa fora do first paint de resultados/destinos |
+| **Hero lazy Canvas** (`HeroIrisCanvas`) | HTML do Hero pinta antes do chunk Three |
+| `manualChunks` three/motion/framer | Cache CDN separado |
+| Sem `inspectAttr` em prod | Bundle limpo |
+| `base: "/"` | Domínio custom Pages |
+| `_headers` / `_redirects` | Cache assets + SPA |
+| `compatibility_date` 2026-09-07 | Runtime Functions |
+| README de produto + `pages:deploy` | DX |
 
-## Follow-up (próxima passagem)
+## Bloqueio
 
-- Lazy do Canvas do Hero (above-the-fold ainda puxa three na home)
-- Gate CI em PR: `pnpm lint` + `pnpm build` sem deploy
-- README de produto (hoje ainda é template Vite)
+`.github/workflows/ci.yml` (lint+build em PR) — API 404 sem scope `workflow`. Colar manualmente.
+
+## Não mudou
+
+Busca/auth, Travelpayouts, D1, alias `--branch=master` no deploy.
 
 ## Review
 
 ```bash
-pnpm install --frozen-lockfile
-pnpm lint
-pnpm build
+pnpm install --frozen-lockfile && pnpm lint && pnpm build
 ```
-
-Codespace: https://github.com/codespaces/new?hide_repo_select=true&ref=v2&repo=1360109556
