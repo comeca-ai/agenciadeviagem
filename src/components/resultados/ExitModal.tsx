@@ -19,7 +19,7 @@ export default function ExitModal({ oferta, onClose }: ExitModalProps) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25 }}
-      className="fixed inset-0 z-[70] flex items-center justify-center bg-[rgba(6,8,15,0.8)] p-4 backdrop-blur-[8px]"
+      className="fixed inset-0 z-[70] flex items-center justify-center bg-[rgba(245,242,234,0.8)] p-4 backdrop-blur-[8px]"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -53,7 +53,7 @@ export default function ExitModal({ oferta, onClose }: ExitModalProps) {
             target="_blank"
             rel="noopener sponsored"
             onClick={onClose}
-            className="sweep-hover inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-amber px-5 py-3 text-[0.9rem] font-bold text-ink transition-transform duration-250 hover:scale-[1.03] active:scale-[0.97]"
+            className="sweep-hover inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-amber px-5 py-3 text-[0.9rem] font-bold text-night transition-transform duration-250 hover:scale-[1.03] active:scale-[0.97]"
           >
             Continuar para o parceiro <ExternalLink size={14} />
           </a>

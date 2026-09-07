@@ -84,7 +84,7 @@ export default function CtaHorizonte() {
           <button
             type="button"
             onClick={scrollToBusca}
-            className="sweep-hover rounded-full bg-amber px-9 py-4 text-lg font-bold text-ink transition-transform duration-250 hover:scale-[1.04] active:scale-[0.97]"
+            className="sweep-hover rounded-full bg-amber px-9 py-4 text-lg font-bold text-night transition-transform duration-250 hover:scale-[1.04] active:scale-[0.97]"
           >
             Buscar voos agora
           </button>

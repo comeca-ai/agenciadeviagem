@@ -86,7 +86,7 @@ export default function BandaBusca() {
               e.preventDefault();
               goToBusca(location.pathname, navigate);
             }}
-            className="sweep-hover inline-block rounded-full bg-amber px-8 py-4 font-bold text-ink transition-transform duration-250 hover:scale-[1.04] active:scale-[0.97]"
+            className="sweep-hover inline-block rounded-full bg-amber px-8 py-4 font-bold text-night transition-transform duration-250 hover:scale-[1.04] active:scale-[0.97]"
           >
             Fazer uma busca
           </a>
