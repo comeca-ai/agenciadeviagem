@@ -81,13 +81,13 @@ export default function DestaqueNoronha() {
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(0deg, rgba(6,8,15,.9) 0%, transparent 55%)",
+            "linear-gradient(0deg, rgba(245,242,234,.9) 0%, transparent 55%)",
         }}
         aria-hidden="true"
       />
 
       {/* Badge flutuante */}
-      <span className="mono-data absolute left-[clamp(1.25rem,4vw,3rem)] top-8 rounded-full bg-amber px-4 py-1.5 text-[0.7rem] font-bold uppercase tracking-[0.15em] text-ink md:left-[max(clamp(1.25rem,4vw,3rem),calc((100vw-80rem)/2+clamp(1.25rem,4vw,3rem)))]">
+      <span className="mono-data absolute left-[clamp(1.25rem,4vw,3rem)] top-8 rounded-full bg-amber px-4 py-1.5 text-[0.7rem] font-bold uppercase tracking-[0.15em] text-night md:left-[max(clamp(1.25rem,4vw,3rem),calc((100vw-80rem)/2+clamp(1.25rem,4vw,3rem)))]">
         Destaque do Olho
       </span>
 
@@ -117,7 +117,7 @@ export default function DestaqueNoronha() {
           <div className="noronha-item mt-8">
             <Link
               to={DESTAQUE_NORONHA.url}
-              className="sweep-hover inline-block rounded-full bg-amber px-7 py-3.5 font-bold text-ink transition-transform duration-250 hover:scale-[1.04] active:scale-[0.97]"
+              className="sweep-hover inline-block rounded-full bg-amber px-7 py-3.5 font-bold text-night transition-transform duration-250 hover:scale-[1.04] active:scale-[0.97]"
             >
               Ver voos para Noronha
             </Link>

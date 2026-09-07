@@ -6,44 +6,46 @@
 
 @layer base {
   :root {
-    --ink: #06080f;
-    --ink-2: #0b101c;
-    --ink-3: #141b2c;
-    --mist: #edebe4;
-    --mist-dim: #98a0b3;
+    /* Tema claro (paper): ink = fundo, mist = texto */
+    --ink: #f5f2ea;
+    --ink-2: #ebe6db;
+    --ink-3: #e0d9cc;
+    --mist: #12151f;
+    --mist-dim: #5a6275;
     --amber: #f0a832;
     --ember: #e4572e;
-    --teal: #35c4b5;
-    --gold-soft: #f5c877;
+    --teal: #0f8f84;
+    --gold-soft: #c4891a;
+    --night: #0b0f1a;
 
-    --background: 225 45% 4%;
-    --foreground: 45 18% 91%;
-    --card: 219 36% 11%;
-    --card-foreground: 45 18% 91%;
-    --popover: 219 36% 11%;
-    --popover-foreground: 45 18% 91%;
+    --background: 40 33% 94%;
+    --foreground: 225 26% 10%;
+    --card: 40 28% 97%;
+    --card-foreground: 225 26% 10%;
+    --popover: 40 28% 97%;
+    --popover-foreground: 225 26% 10%;
     --primary: 37 86% 57%;
     --primary-foreground: 225 45% 4%;
-    --secondary: 219 36% 11%;
-    --secondary-foreground: 45 18% 91%;
-    --muted: 219 36% 11%;
-    --muted-foreground: 220 14% 65%;
+    --secondary: 40 20% 90%;
+    --secondary-foreground: 225 26% 10%;
+    --muted: 40 18% 90%;
+    --muted-foreground: 220 10% 40%;
     --accent: 37 86% 57%;
     --accent-foreground: 225 45% 4%;
-    --destructive: 12 76% 54%;
-    --destructive-foreground: 45 18% 91%;
-    --border: 45 18% 91%;
-    --input: 219 36% 16%;
-    --ring: 37 86% 57%;
+    --destructive: 12 76% 45%;
+    --destructive-foreground: 40 33% 96%;
+    --border: 225 12% 78%;
+    --input: 40 18% 90%;
+    --ring: 37 86% 45%;
     --radius: 0.625rem;
-    --sidebar-background: 225 45% 4%;
-    --sidebar-foreground: 45 18% 91%;
-    --sidebar-primary: 37 86% 57%;
-    --sidebar-primary-foreground: 225 45% 4%;
-    --sidebar-accent: 219 36% 11%;
-    --sidebar-accent-foreground: 45 18% 91%;
-    --sidebar-border: 219 36% 16%;
-    --sidebar-ring: 37 86% 57%;
+    --sidebar-background: 40 33% 94%;
+    --sidebar-foreground: 225 26% 10%;
+    --sidebar-primary: 37 86% 45%;
+    --sidebar-primary-foreground: 40 33% 96%;
+    --sidebar-accent: 40 20% 90%;
+    --sidebar-accent-foreground: 225 26% 10%;
+    --sidebar-border: 225 12% 82%;
+    --sidebar-ring: 37 86% 45%;
   }
 }
 
@@ -59,7 +61,7 @@
   }
   ::selection {
     background: rgba(240, 168, 50, 0.35);
-    color: var(--mist);
+    color: var(--night);
   }
 }
 
@@ -80,13 +82,14 @@
     color: transparent;
   }
   .bg-horizon-gradient {
-    background: linear-gradient(180deg, #06080f 0%, #0b101c 55%, #0e2a33 100%);
+    background: linear-gradient(180deg, #f5f2ea 0%, #ebe6db 55%, #d5ebe8 100%);
   }
   .grain-overlay {
     position: fixed;
     inset: 0;
     z-index: 90;
     pointer-events: none;
+    opacity: 0.22;
     background-image: url("/assets/grain.svg");
     background-repeat: repeat;
     background-size: 256px 256px;
@@ -95,7 +98,6 @@
     @apply font-sans font-bold uppercase text-[0.75rem];
     letter-spacing: 0.28em;
   }
-  /* sweep de luz que atravessa elementos no hover */
   .sweep-hover {
     position: relative;
     overflow: hidden;
@@ -126,7 +128,6 @@
     margin-inline: auto;
     padding-inline: clamp(1.25rem, 4vw, 3rem);
   }
-  /* marquee */
   @keyframes marquee-left {
     from { transform: translateX(0); }
     to { transform: translateX(-50%); }
@@ -141,7 +142,6 @@
   .animate-marquee-right {
     animation: marquee-right 24s linear infinite;
   }
-  /* scroll cue bounce */
   @keyframes cue-bounce {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(8px); }
@@ -149,7 +149,6 @@
   .animate-cue-bounce {
     animation: cue-bounce 1.6s ease-in-out infinite;
   }
-  /* iris blink (loading) */
   @keyframes iris-blink {
     0%, 100% { transform: scaleY(1); }
     50% { transform: scaleY(0.1); }
@@ -157,7 +156,6 @@
   .animate-iris-blink {
     animation: iris-blink 0.9s ease-in-out infinite;
   }
-  /* rota tracejada fluida */
   @keyframes route-flow {
     to { stroke-dashoffset: -24; }
   }
@@ -165,7 +163,6 @@
     stroke-dasharray: 6 6;
     animation: route-flow 3s linear infinite;
   }
-  /* rotacao lenta da iris decorativa */
   @keyframes iris-spin {
     to { transform: rotate(360deg); }
   }
@@ -189,16 +186,15 @@
   }
 }
 
-/* scrollbar fina teal para scrollers horizontais */
 .scroller-thin {
   scrollbar-width: thin;
-  scrollbar-color: rgba(53, 196, 181, 0.4) transparent;
+  scrollbar-color: rgba(15, 143, 132, 0.45) transparent;
 }
 .scroller-thin::-webkit-scrollbar {
   height: 4px;
 }
 .scroller-thin::-webkit-scrollbar-thumb {
-  background: rgba(53, 196, 181, 0.4);
+  background: rgba(15, 143, 132, 0.45);
   border-radius: 999px;
 }
 .scroller-thin::-webkit-scrollbar-track {

@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { Instagram, Mail } from "lucide-react";
 import { goToBusca } from "@/lib/nav";
@@ -18,25 +17,13 @@ const DESTINOS = [
 ];
 
 export default function Footer() {
-  const irisRef = useRef<HTMLImageElement>(null);
   const location = useLocation();
   const navigate = useNavigate();
 
-  // A íris do footer acompanha levemente o cursor (máx. 6px)
-  const onMouseMove = (e: React.MouseEvent<HTMLElement>) => {
-    const el = irisRef.current;
-    if (!el) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const dx = ((e.clientX - rect.left) / rect.width - 0.5) * 12;
-    const dy = ((e.clientY - rect.top) / rect.height - 0.5) * 12;
-    el.style.transform = `translate(${dx}px, ${dy}px)`;
-  };
-
   return (
-    <footer className="bg-horizon-gradient" onMouseMove={onMouseMove}>
+    <footer className="bg-horizon-gradient">
       <div className="container-site py-[clamp(4rem,10vh,7rem)]">
-        {/* Topo: headline + CTA */}
-        <div className="flex flex-col items-start justify-between gap-8 border-b border-white/5 pb-12 md:flex-row md:items-center">
+        <div className="flex flex-col items-start justify-between gap-8 border-b border-mist/10 pb-12 md:flex-row md:items-center">
           <h2 className="font-display text-[clamp(2rem,4.5vw,3.5rem)] font-medium italic leading-[1.05] text-mist">
             O horizonte é só o começo.
           </h2>
@@ -46,22 +33,16 @@ export default function Footer() {
               e.preventDefault();
               goToBusca(location.pathname, navigate);
             }}
-            className="sweep-hover shrink-0 rounded-full bg-amber px-7 py-3.5 font-bold text-ink transition-transform duration-250 hover:scale-[1.04] active:scale-[0.97]"
+            className="sweep-hover shrink-0 rounded-full bg-amber px-7 py-3.5 font-bold text-night transition-transform duration-250 hover:scale-[1.04] active:scale-[0.97]"
           >
             Abrir o Olho
           </a>
         </div>
 
-        {/* Grade 4 colunas */}
         <div className="grid grid-cols-2 gap-10 py-12 md:grid-cols-4">
           <div>
             <div className="mb-4 flex items-center gap-2.5">
-              <img
-                ref={irisRef}
-                src="/assets/logo.svg"
-                alt=""
-                className="h-7 w-7 transition-transform duration-200 ease-out"
-              />
+              <img src="/assets/logo.svg" alt="" className="h-7 w-7" />
               <span className="font-display text-base font-medium text-mist">
                 Olho <em className="italic text-amber">de Tandera</em>
               </span>
@@ -141,14 +122,12 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Avisos legais */}
-        <div className="mono-data space-y-1.5 border-t border-white/5 pt-8 text-[0.8rem] text-mist-dim">
+        <div className="mono-data space-y-1.5 border-t border-mist/10 pt-8 text-[0.8rem] text-mist-dim">
           <p>Preços por pessoa, taxas incluídas, sujeitos a alteração sem aviso prévio.</p>
           <p>A reserva é concluída no site do parceiro. O Olho de Tandera enxerga — quem voa é você.</p>
           <p>Atendimento exclusivo para maiores de 18 anos.</p>
         </div>
 
-        {/* Linha final */}
         <div className="mt-8 flex flex-col items-start justify-between gap-3 text-[0.8rem] text-mist-dim md:flex-row md:items-center">
           <p>© 2025 Olho de Tandera · olhodetandera.com</p>
           <p className="mono-data text-[0.7rem] text-teal/80">Rodando na borda — Cloudflare</p>

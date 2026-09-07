@@ -273,7 +273,7 @@ export default function Resultados() {
             e.preventDefault();
             goToBusca(location.pathname, navigate);
           }}
-          className="sweep-hover rounded-full bg-amber px-7 py-3.5 font-bold text-ink transition-transform duration-250 hover:scale-[1.04] active:scale-[0.97]"
+          className="sweep-hover rounded-full bg-amber px-7 py-3.5 font-bold text-night transition-transform duration-250 hover:scale-[1.04] active:scale-[0.97]"
         >
           Nova busca
         </a>
@@ -288,7 +288,7 @@ export default function Resultados() {
         <ListFilter size={16} className="text-amber" />
         Filtros
         {ativos > 0 && (
-          <span className="mono-data flex h-5 w-5 items-center justify-center rounded-full bg-amber text-[0.65rem] font-bold text-ink">
+          <span className="mono-data flex h-5 w-5 items-center justify-center rounded-full bg-amber text-[0.65rem] font-bold text-night">
             {ativos}
           </span>
         )}
@@ -302,7 +302,7 @@ export default function Resultados() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-[60] bg-[rgba(6,8,15,0.7)] backdrop-blur-[8px] lg:hidden"
+            className="fixed inset-0 z-[60] bg-[rgba(245,242,234,0.7)] backdrop-blur-[8px] lg:hidden"
             onClick={() => setSheetOpen(false)}
           >
             <motion.div
@@ -317,7 +317,7 @@ export default function Resultados() {
               <button
                 type="button"
                 onClick={() => setSheetOpen(false)}
-                className="sweep-hover mt-4 w-full rounded-full bg-amber px-5 py-3 text-[0.9rem] font-bold text-ink"
+                className="sweep-hover mt-4 w-full rounded-full bg-amber px-5 py-3 text-[0.9rem] font-bold text-night"
               >
                 Ver {visiveis.length} {visiveis.length === 1 ? "oferta" : "ofertas"}
               </button>

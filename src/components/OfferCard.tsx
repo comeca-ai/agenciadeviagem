@@ -119,7 +119,7 @@ export default function OfferCard({ offer }: { offer: Offer }) {
             href={reservaUrl}
             target="_blank"
             rel="noopener sponsored"
-            className="sweep-hover inline-flex shrink-0 items-center gap-1.5 rounded-full bg-amber px-4 py-2 text-[0.8rem] font-bold text-ink transition-transform duration-250 hover:scale-[1.04] active:scale-[0.97]"
+            className="sweep-hover inline-flex shrink-0 items-center gap-1.5 rounded-full bg-amber px-4 py-2 text-[0.8rem] font-bold text-night transition-transform duration-250 hover:scale-[1.04] active:scale-[0.97]"
           >
             Reservar <ExternalLink size={12} />
           </a>

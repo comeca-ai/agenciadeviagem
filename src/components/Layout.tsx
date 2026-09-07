@@ -4,20 +4,16 @@ import Lenis from "lenis";
 import { AnimatePresence, motion } from "framer-motion";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-import CustomCursor from "./CustomCursor";
 import { ScrollTrigger, prefersReducedMotion } from "@/lib/motion";
 
 /**
- * Layout global: Navbar fixa (top-0 z-50) + slot de conteúdo com padding-top
- * de 4.5rem (a altura da nav) + Footer + overlays (grão de filme, cursor).
- * Também inicializa o Lenis (smooth scroll) e a transição de página
- * (fallback crossfade 0.3s da "Piscada do Olho").
+ * Layout global: Navbar + conteúdo + Footer + overlay de grão leve.
+ * Cursor customizado removido (pedido UX: sem bolinha no mouse).
  */
 export default function Layout() {
   const location = useLocation();
   const outlet = useOutlet();
 
-  // Lenis em todo o site
   useEffect(() => {
     if (prefersReducedMotion()) return;
     const lenis = new Lenis({ lerp: 0.09, smoothWheel: true });
@@ -34,7 +30,6 @@ export default function Layout() {
     };
   }, []);
 
-  // Ao trocar de rota: volta ao topo (exceto âncoras de hash)
   useEffect(() => {
     if (!location.hash) window.scrollTo(0, 0);
   }, [location.pathname, location.hash]);
@@ -56,7 +51,6 @@ export default function Layout() {
       </AnimatePresence>
       <Footer />
       <div className="grain-overlay" aria-hidden="true" />
-      <CustomCursor />
     </div>
   );
 }

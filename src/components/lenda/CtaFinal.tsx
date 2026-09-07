@@ -86,7 +86,7 @@ export default function CtaFinal() {
               e.preventDefault();
               goToBusca(location.pathname, navigate);
             }}
-            className="cta-final-btn sweep-hover rounded-full bg-amber px-8 py-4 font-bold text-ink transition-transform duration-250 hover:scale-[1.04] active:scale-[0.97]"
+            className="cta-final-btn sweep-hover rounded-full bg-amber px-8 py-4 font-bold text-night transition-transform duration-250 hover:scale-[1.04] active:scale-[0.97]"
           >
             Deixe o Olho procurar por você
           </a>

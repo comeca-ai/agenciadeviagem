@@ -11,7 +11,7 @@ function IrisFallback() {
       className="absolute inset-0"
       style={{
         background:
-          "radial-gradient(circle at 50% 50%, rgba(245,200,119,0.5) 0%, rgba(240,168,50,0.3) 30%, rgba(228,87,46,0.15) 62%, transparent 72%)",
+          "radial-gradient(circle at 50% 50%, rgba(245,200,119,0.45) 0%, rgba(240,168,50,0.22) 30%, rgba(228,87,46,0.1) 62%, transparent 72%)",
         filter: "blur(40px)",
       }}
       aria-hidden
@@ -113,7 +113,7 @@ export default function Hero() {
       gsap.fromTo(
         canvasWrapRef.current,
         { filter: "brightness(1)" },
-        { filter: "brightness(1.8)", duration: 0.2, yoyo: true, repeat: 1 },
+        { filter: "brightness(1.15)", duration: 0.2, yoyo: true, repeat: 1 },
       );
     }
     document.getElementById("busca")?.scrollIntoView({ behavior: "smooth" });
@@ -137,7 +137,8 @@ export default function Hero() {
       <div
         className="pointer-events-none absolute inset-0"
         style={{
-          background: "radial-gradient(ellipse at center, transparent 45%, rgba(6,8,15,0.9) 100%)",
+          background:
+            "radial-gradient(ellipse at center, transparent 42%, rgba(245,242,234,0.92) 100%)",
         }}
       />
 
@@ -163,14 +164,14 @@ export default function Hero() {
           <button
             type="button"
             onClick={scrollToBusca}
-            className="hero-cta sweep-hover rounded-full bg-amber px-7 py-3.5 font-bold text-ink transition-transform duration-250 hover:scale-[1.04] active:scale-[0.97]"
+            className="hero-cta sweep-hover rounded-full bg-amber px-7 py-3.5 font-bold text-night transition-transform duration-250 hover:scale-[1.04] active:scale-[0.97]"
             style={{ opacity: reduced ? 1 : 0 }}
           >
             Abrir o Olho
           </button>
           <Link
             to="/a-lenda"
-            className="hero-cta rounded-full border border-[rgba(237,235,228,0.2)] px-7 py-3.5 font-medium text-mist transition-colors duration-250 hover:border-amber hover:bg-[rgba(240,168,50,0.08)]"
+            className="hero-cta rounded-full border border-mist/15 px-7 py-3.5 font-medium text-mist transition-colors duration-250 hover:border-amber hover:bg-[rgba(240,168,50,0.1)]"
             style={{ opacity: reduced ? 1 : 0 }}
           >
             Conheça a lenda
@@ -183,7 +184,7 @@ export default function Hero() {
         className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2"
         style={{ opacity: reduced ? 1 : 0 }}
       >
-        <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[rgba(237,235,228,0.2)]">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full border border-mist/15">
           <ChevronDown size={16} className="animate-cue-bounce text-mist" />
         </div>
         <span className="mono-data text-[0.65rem] uppercase tracking-[0.28em] text-mist-dim">

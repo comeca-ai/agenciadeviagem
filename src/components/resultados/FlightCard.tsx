@@ -191,7 +191,7 @@ export default function FlightCard({ oferta, badge, index, onReservar }: FlightC
           <button
             type="button"
             onClick={() => onReservar(oferta)}
-            className="sweep-hover relative inline-flex shrink-0 items-center gap-1.5 rounded-full bg-amber px-5 py-2.5 text-[0.85rem] font-bold text-ink transition-transform duration-250 hover:scale-[1.04] active:scale-[0.97]"
+            className="sweep-hover relative inline-flex shrink-0 items-center gap-1.5 rounded-full bg-amber px-5 py-2.5 text-[0.85rem] font-bold text-night transition-transform duration-250 hover:scale-[1.04] active:scale-[0.97]"
           >
             Reservar
           </button>
