@@ -4,6 +4,8 @@
  *
  * Hash: PBKDF2 (Web Crypto nativo do runtime Workers — sem dependências).
  * Sessão: cookie httpOnly "olho_session", 30 dias.
+ * RLS (app-level): toda query de dados do usuário filtra por user_id da sessão.
+ * Rate-limit: Cache API na borda (CF-Connecting-IP).
  */
 
 export const SESSION_COOKIE = "olho_session";
@@ -43,7 +45,6 @@ export async function hashSenha(senha) {
 
 export async function verificaSenha(senha, salt, hashEsperado) {
   const hash = await pbkdf2(senha, salt);
-  // comparação em tempo constante (simples)
   if (hash.length !== hashEsperado.length) return false;
   let diff = 0;
   for (let i = 0; i < hash.length; i++) diff |= hash.charCodeAt(i) ^ hashEsperado.charCodeAt(i);
@@ -64,7 +65,43 @@ export function tokenDoCookie(request) {
   return m ? m[1] : null;
 }
 
-/** Cria sessão no D1 e devolve o token. */
+export function clientIp(request) {
+  return request.headers.get("CF-Connecting-IP") || request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+}
+
+/**
+ * Rate-limit na borda via Cache API.
+ * @returns {{ ok: true } | { ok: false, response: Response }}
+ */
+export async function rateLimit(request, action, { limit = 10, windowS = 60 } = {}) {
+  const ip = clientIp(request);
+  const key = new Request(`https://rl.olhodetandera.internal/${action}/${ip}`);
+  const cache = caches.default;
+  let count = 0;
+  const hit = await cache.match(key);
+  if (hit) {
+    count = parseInt(await hit.text(), 10) || 0;
+  }
+  if (count >= limit) {
+    return {
+      ok: false,
+      response: json(
+        { erro: "rate_limit", detalhe: "Muitas tentativas. Espere um minuto e tente de novo." },
+        429,
+        { "retry-after": String(windowS) }
+      ),
+    };
+  }
+  count += 1;
+  await cache.put(
+    key,
+    new Response(String(count), {
+      headers: { "cache-control": `max-age=${windowS}`, "content-type": "text/plain" },
+    })
+  );
+  return { ok: true };
+}
+
 export async function criarSessao(db, userId) {
   const token = crypto.randomUUID() + crypto.randomUUID().replaceAll("-", "");
   const expira = new Date(Date.now() + SESSION_DIAS * 86400000).toISOString();
@@ -72,7 +109,7 @@ export async function criarSessao(db, userId) {
   return token;
 }
 
-/** Retorna o usuário logado (ou null) a partir do cookie. */
+/** Sessão → usuário (única porta de identidade; base do RLS). */
 export async function usuarioAtual(request, db) {
   const token = tokenDoCookie(request);
   if (!token) return null;
@@ -87,10 +124,51 @@ export async function usuarioAtual(request, db) {
   return row || null;
 }
 
+/** RLS: apaga só a sessão do cookie atual (não aceita user_id do cliente). */
+export async function encerrarSessaoAtual(request, db) {
+  const token = tokenDoCookie(request);
+  if (!token) return;
+  await db.prepare("DELETE FROM sessions WHERE token = ?").bind(token).run();
+}
+
+/** RLS: alertas só do user_id da sessão. */
+export async function listarAlertasDoUsuario(db, userId) {
+  const { results } = await db
+    .prepare(
+      `SELECT id, origem, destino, ida, volta, preco_alvo, ativo, criado_em
+       FROM price_alerts WHERE user_id = ? ORDER BY criado_em DESC`
+    )
+    .bind(userId)
+    .all();
+  return results || [];
+}
+
+/** RLS: insert sempre com user_id da sessão — nunca do body. */
+export async function criarAlertaDoUsuario(db, userId, { origem, destino, ida, volta, preco_alvo }) {
+  const id = crypto.randomUUID();
+  await db
+    .prepare(
+      `INSERT INTO price_alerts (id, user_id, origem, destino, ida, volta, preco_alvo, ativo)
+       VALUES (?, ?, ?, ?, ?, ?, ?, 1)`
+    )
+    .bind(id, userId, origem, destino, ida || null, volta || null, preco_alvo ?? null)
+    .run();
+  return id;
+}
+
+/** RLS: delete só se o alerta pertence ao user. */
+export async function apagarAlertaDoUsuario(db, userId, alertId) {
+  const r = await db
+    .prepare("DELETE FROM price_alerts WHERE id = ? AND user_id = ?")
+    .bind(alertId, userId)
+    .run();
+  return (r.meta?.changes || 0) > 0;
+}
+
 export function validaCadastro({ nome, email, senha, maior18 }) {
   if (!nome || String(nome).trim().length < 2) return "Informe seu nome.";
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(email))) return "E-mail inválido.";
   if (!senha || String(senha).length < 8) return "A senha precisa de pelo menos 8 caracteres.";
-  if (maior18 !== true) return "É preciso ter 18 anos ou mais para criar conta."; // portão da marca
+  if (maior18 !== true) return "É preciso ter 18 anos ou mais para criar conta.";
   return null;
 }
