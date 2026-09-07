@@ -35,7 +35,7 @@ export default function FiltrosPerfil({ ativo, onChange }: FiltrosPerfilProps) {
   }, []);
 
   return (
-    <div className="sticky top-[4.5rem] z-30 border-b border-white/5 bg-ink/75 backdrop-blur-[16px]">
+    <div className="sticky top-[4.5rem] z-30 border-b border-mist/10 bg-ink/75 backdrop-blur-[16px]">
       <div ref={barRef} className="container-site">
         <div
           className="scroller-thin flex gap-2.5 overflow-x-auto py-4"
@@ -53,7 +53,7 @@ export default function FiltrosPerfil({ ativo, onChange }: FiltrosPerfilProps) {
                 className={cn(
                   "shrink-0 rounded-full border px-4 py-2 text-[0.85rem] font-medium transition-[background-color,border-color,color] duration-250",
                   ativoChip
-                    ? "border-amber bg-amber text-ink"
+                    ? "border-amber bg-amber text-night"
                     : "border-[rgba(237,235,228,0.2)] bg-transparent text-mist-dim hover:border-amber hover:text-mist",
                 )}
               >
