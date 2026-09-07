@@ -1,5 +1,5 @@
 {
-  "name": "my-app",
+  "name": "olhodetandera",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "pages:deploy": "pnpm build && wrangler pages deploy dist --project-name=olhodetandera --branch=master"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
