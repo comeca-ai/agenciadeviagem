@@ -1,102 +1,38 @@
-# Deploy — Olho de Tandera (100% Cloudflare)
+# Deploy — Olho de Tandera (Cloudflare Worker)
 
-> olhodetandera.com · Pages (site) + Pages Functions (`/api/busca`, `/api/auth/*`) · custo: R$ 0/mês no plano Free
+O deploy de produção é um único Cloudflare Worker: Vite gera `dist/` e o Worker serve esses assets com SPA fallback; `/api/*` é executado pelo mesmo Worker. O projeto Pages antigo não é atualizado por este fluxo.
 
-**Importante:** os arquivos da pasta `functions/` **são Workers** — a Cloudflare os compila e executa na borda automaticamente no deploy do Pages. Não é preciso criar Workers separados.
+## Pré-requisitos
 
-## 0. Caminho rápido — deploy direto via Wrangler (sem GitHub)
+No GitHub Actions, configure `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `TRAVELPAYOUTS_TOKEN` e `TRAVELPAYOUTS_MARKER`. O token precisa editar Workers, D1 e secrets.
 
-Com o código na sua máquina, são 5 comandos para colocar os Workers no ar:
+O D1 existente continua sendo `olhodetandera`, com binding `DB` e database id `6add3cdc-47c1-4fc2-9cca-64fb664914b5`; não crie outro banco. Migrations são aplicadas pelo workflow.
+
+## Deploy local
 
 ```bash
-npx wrangler login                              # autoriza sua conta Cloudflare no browser
-npx wrangler d1 create olhodetandera            # cria o banco → copie o database_id pro wrangler.toml
+pnpm install
+pnpm build
 npx wrangler d1 migrations apply olhodetandera --remote
-npm install && npm run build
-npx wrangler pages deploy dist --project-name=olhodetandera
+printf '%s' "$TRAVELPAYOUTS_TOKEN" | npx wrangler secret put TRAVELPAYOUTS_TOKEN --name olhodetandera
+printf '%s' "$TRAVELPAYOUTS_MARKER" | npx wrangler secret put TRAVELPAYOUTS_MARKER --name olhodetandera
+npx wrangler deploy
 ```
 
-Pronto: site + Workers `/api/busca` e `/api/auth/*` no ar em `olhodetandera.pages.dev`. Depois configure os Secrets (seção 4), o binding D1 no Pages (seção 6) e o domínio (seções 2 e 3.4).
+## Cutover do domínio
 
-## 0b. Piloto automático — GitHub Actions (deploy a cada push, usando seus secrets)
+1. Faça o deploy inicial sem trocar o tráfego e valide `https://olhodetandera.<account>.workers.dev`.
+2. No Cloudflare, remova/desassocie `olhodetandera.com` e `www.olhodetandera.com` do projeto Pages antigo.
+3. O `wrangler.toml` declara os dois como `custom_domain` do Worker; confirme DNS, certificado e os endpoints `/api/busca`, `/api/auth/me` e `/api/alerts`.
+4. Só depois da validação, aposente o Pages. Não há merge ou cutover automático neste PR.
 
-O repo já traz `.github/workflows/deploy.yml`: a cada push na branch principal, o GitHub Actions faz build, aplica as migrations do D1, sobe o site + Workers no Pages e grava os secrets do Travelpayouts — **sem nenhum token passar por terceiros** (os secrets do GitHub só existem dentro da execução do workflow).
+## Segurança e comportamento
 
-Configuração única (10 min):
+- `TRAVELPAYOUTS_TOKEN` e `TRAVELPAYOUTS_MARKER` ficam como secrets do Worker, nunca no bundle.
+- `DB` é o mesmo binding usado por login, cadastro e alertas; cookies e rate limits continuam no runtime Workers.
+- `functions/` é a implementação antiga de Pages mantida apenas como referência durante a transição; o código executado está em `worker/`.
+- A antiga opção `--branch=master` só fazia sentido para Pages e foi removida do caminho Worker.
 
-1. **GitHub → Settings → Secrets and variables → Actions → New repository secret**, crie 4:
-   - `CLOUDFLARE_API_TOKEN` — em dash.cloudflare.com → My Profile → API Tokens → template **"Edit Cloudflare Workers"**
-   - `CLOUDFLARE_ACCOUNT_ID` — barra lateral direita do dashboard Cloudflare
-   - `TRAVELPAYOUTS_TOKEN` e `TRAVELPAYOUTS_MARKER` — painel travelpayouts.com
-2. **Crie o banco D1 uma única vez**: dash.cloudflare.com → Workers & Pages → **D1** → Create database → nome `olhodetandera`.
-3. **Faça push** do código para `main` (ou `master`) → a aba **Actions** mostra o deploy acontecendo.
-4. No projeto Pages que surgir: **Settings → Functions → D1 database bindings** → binding `DB` → banco `olhodetandera`. Pronto — auth e busca reais no ar.
+## CI
 
-## 1. Pré-requisitos (15 min)
-
-1. **Travelpayouts** — cadastro gratuito em https://www.travelpayouts.com → no painel, pegue seu **API token** e seu **marker** (ID de afiliado). É eles que pagam a comissão por reserva.
-2. **Cloudflare** — conta gratuita em https://dash.cloudflare.com.
-3. Repositório com este código no GitHub (`comeca-ai/agenciadeviagem`).
-
-## 2. Domínio na Cloudflare
-
-1. No dashboard: **Add site** → `olhodetandera.com` → plano **Free**.
-2. A Cloudflare mostra **2 nameservers**. No registrador onde você comprou o domínio, troque os nameservers pelos da Cloudflare. Propagação: até 24–72h (geralmente menos).
-3. SSL/TLS: certificado Universal **gratuito e automático** — modo **Full (strict)**.
-
-## 3. Site no ar (Pages)
-
-1. **Workers & Pages → Create → Pages → Connect to Git** → escolha `comeca-ai/agenciadeviagem`.
-2. Build settings:
-   - Framework preset: **Vite**
-   - Build command: `npm run build`
-   - Build output directory: `dist`
-3. Deploy. A cada `git push` na branch principal, sai deploy automático.
-4. Em **Pages → Custom domains**: adicione `olhodetandera.com` e `www.olhodetandera.com` (a Cloudflare cria DNS e SSL sozinha).
-
-## 4. Ligar o buscador de verdade (os Secrets)
-
-Sem segredos, o `/api/busca` responde 503 e o site mostra dados de demonstração. Para dados reais:
-
-1. No projeto Pages: **Settings → Environment variables (Production)** → adicione como **Secrets**:
-   - `TRAVELPAYOUTS_TOKEN` = seu token da Travelpayouts
-   - `TRAVELPAYOUTS_MARKER` = seu marker de afiliado
-2. **Retry deployment** (ou faça um push qualquer) para aplicar.
-3. Teste: `https://olhodetandera.com/api/busca?origem=GRU&destino=LIS&ida=2026-11-10&volta=2026-11-17&pax=1`
-
-## 5. Desenvolvimento local (opcional)
-
-```bash
-npm install
-cp .dev.vars.example .dev.vars   # preencha com token/marker reais
-npm run dev                      # frontend (Vite)
-# ou, para testar as Functions localmente:
-npx wrangler pages dev dist -- npm run build
-```
-
-## 6. Autenticação (D1 — o SQLite da Cloudflare)
-
-Endpoints prontos: `POST /api/auth/register` (nome, email, senha ≥ 8, **maior18 obrigatório**), `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me`. Sessão via cookie httpOnly de 30 dias. Senhas com PBKDF2 (100 mil iterações, Web Crypto nativo — zero dependências).
-
-Para ativar em produção:
-
-```bash
-npx wrangler login
-npx wrangler d1 create olhodetandera          # copie o database_id exibido
-# cole o database_id no wrangler.toml (seção [[d1_databases]])
-npx wrangler d1 migrations apply olhodetandera --remote
-```
-
-No projeto Pages: **Settings → Functions → D1 database bindings** → binding `DB` apontando para o banco `olhodetandera`. Retry deployment e pronto: cadastro/login passam a funcionar no ar. Sem o binding, a API responde 503 e o site segue em modo demonstração.
-
-**LGPD/pequeno print:** coletamos só nome + e-mail; senha nunca em texto claro; o usuário pode pedir exclusão da conta (tabela `users` + `sessions` em cascata). O campo `maior_de_18` registra o consentimento do portão etário.
-
-## 7. Limites do plano Free (quando crescer)
-
-- **100 mil requisições/dia** de Functions — estourou, volta a R$ 0 no dia seguinte (ou Workers Paid, ~US$5/mês).
-- Cache de 30 min por rota+data reduz drasticamente as chamadas à API externa.
-- Tarifas aéreas mudam rápido: o site sempre exibe o aviso "preço sujeito a alteração" — exigência de compliance e da Travelpayouts.
-
----
-
-*O Olho de Tandera enxerga — quem voa é você.* 👁️
+O workflow canônico é `.github/workflows/deploy.yml`. Se o token que atualiza este repositório não tiver escopo de workflow, copie `docs/deploy-worker.yml.snippet` para `.github/workflows/deploy.yml` manualmente antes de habilitar o deploy.
