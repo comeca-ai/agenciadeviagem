@@ -44,7 +44,24 @@ npm run dev                      # frontend (Vite)
 npx wrangler pages dev dist -- npm run build
 ```
 
-## 6. Limites do plano Free (quando crescer)
+## 6. Autenticação (D1 — o SQLite da Cloudflare)
+
+Endpoints prontos: `POST /api/auth/register` (nome, email, senha ≥ 8, **maior18 obrigatório**), `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me`. Sessão via cookie httpOnly de 30 dias. Senhas com PBKDF2 (100 mil iterações, Web Crypto nativo — zero dependências).
+
+Para ativar em produção:
+
+```bash
+npx wrangler login
+npx wrangler d1 create olhodetandera          # copie o database_id exibido
+# cole o database_id no wrangler.toml (seção [[d1_databases]])
+npx wrangler d1 migrations apply olhodetandera --remote
+```
+
+No projeto Pages: **Settings → Functions → D1 database bindings** → binding `DB` apontando para o banco `olhodetandera`. Retry deployment e pronto: cadastro/login passam a funcionar no ar. Sem o binding, a API responde 503 e o site segue em modo demonstração.
+
+**LGPD/pequeno print:** coletamos só nome + e-mail; senha nunca em texto claro; o usuário pode pedir exclusão da conta (tabela `users` + `sessions` em cascata). O campo `maior_de_18` registra o consentimento do portão etário.
+
+## 7. Limites do plano Free (quando crescer)
 
 - **100 mil requisições/dia** de Functions — estourou, volta a R$ 0 no dia seguinte (ou Workers Paid, ~US$5/mês).
 - Cache de 30 min por rota+data reduz drasticamente as chamadas à API externa.
