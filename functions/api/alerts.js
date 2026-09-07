@@ -12,7 +12,7 @@ import {
   criarAlertaDoUsuario,
   apagarAlertaDoUsuario,
   rateLimit,
-} from "../auth/_utils.js";
+} from "./auth/_utils.js";
 
 function isIata(v) {
   return typeof v === "string" && /^[A-Z]{3}$/.test(v);
