@@ -5,7 +5,6 @@ import { ListFilter } from "lucide-react";
 import { buildSearchUrl, parseSearchParams, type SearchParams } from "@/lib/search";
 import { goToBusca } from "@/lib/nav";
 import {
-  demoBuscaResponse,
   type BuscaResponse,
   type Oferta,
 } from "@/data/demo-ofertas";
@@ -48,6 +47,7 @@ export default function Resultados() {
   const [fase, setFase] = useState<"scan" | "done">("scan");
   const [resposta, setResposta] = useState<BuscaResponse | null>(null);
   const [isDemo, setIsDemo] = useState(false);
+  const [erroBusca, setErroBusca] = useState<string | null>(null);
   const [editOpen, setEditOpen] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [saida, setSaida] = useState<Oferta | null>(null);
@@ -69,6 +69,7 @@ export default function Resultados() {
     setFase("scan");
     setEditOpen(false);
     setSheetOpen(false);
+    setErroBusca(null);
 
     const minMs = primeiraVarredura.current ? 1600 : 1000;
     primeiraVarredura.current = false;
@@ -82,31 +83,37 @@ export default function Resultados() {
     });
     if (params.volta) q.set("volta", params.volta);
 
-    const demo = () =>
-      demoBuscaResponse({
-        origem: params.origem,
-        destino: params.destino,
-        ida: params.ida,
-        volta: params.volta ?? null,
-        pax: params.pax,
-      });
+    const finish = (d: BuscaResponse | null, erro: string | null) => {
+      const espera = Math.max(0, minMs - (performance.now() - t0));
+      setTimeout(() => {
+        if (!vivo) return;
+        setResposta(d);
+        setIsDemo(false);
+        setErroBusca(erro);
+        setFase("done");
+      }, espera);
+    };
 
     fetch(`/api/busca?${q.toString()}`)
-      .then((r) => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json() as Promise<BuscaResponse>;
+      .then(async (r) => {
+        const body = (await r.json().catch(() => ({}))) as BuscaResponse & {
+          erro?: string;
+          detalhe?: string;
+        };
+        if (!r.ok) {
+          const detalhe =
+            body.detalhe ||
+            (r.status === 503
+              ? "Travelpayouts ainda sem token. Sem preço inventado."
+              : "A busca não voltou com preço.");
+          throw new Error(detalhe);
+        }
+        return body;
       })
-      .then((d) => ({ d, demo: false }))
-      .catch(() => ({ d: demo(), demo: true }))
-      .then(({ d, demo: ehDemo }) => {
-        const espera = Math.max(0, minMs - (performance.now() - t0));
-        setTimeout(() => {
-          if (!vivo) return;
-          setResposta(d);
-          setIsDemo(ehDemo);
-          setFase("done");
-        }, espera);
-      });
+      .then((d) => finish(d, null))
+      .catch((e: Error) =>
+        finish(null, e.message || "A busca não voltou com preço. Sem dado inventado."),
+      );
 
     return () => {
       vivo = false;
@@ -206,7 +213,12 @@ export default function Resultados() {
               </span>
             </div>
 
-            {visiveis.length === 0 && fase === "done" ? (
+            {erroBusca && fase === "done" ? (
+              <div className="rounded-2xl border border-[rgba(228,87,46,0.4)] bg-[rgba(228,87,46,0.08)] px-5 py-8 text-center">
+                <p className="font-display text-xl text-mist">Sem preço agora</p>
+                <p className="mt-2 text-sm text-mist-dim">{erroBusca}</p>
+              </div>
+            ) : visiveis.length === 0 && fase === "done" ? (
               <EmptyState onLimpar={() => setFiltros({ ...FILTROS_INICIAIS })} />
             ) : (
               <div className="flex flex-col gap-5">

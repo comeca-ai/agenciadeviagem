@@ -26,6 +26,8 @@ interface SearchPanelProps {
     pax?: number;
   };
   className?: string;
+  cta?: string;
+  instant?: boolean;
 }
 
 /* ------------------------- Autocomplete de cidade ------------------------ */
@@ -153,7 +155,7 @@ function CityField({ id, label, icon, value, onChange, placeholder, error }: Cit
 
 /* ------------------------------- Painel --------------------------------- */
 
-export default function SearchPanel({ initial, className }: SearchPanelProps) {
+export default function SearchPanel({ initial, className, cta = "Vasculhar o mundo", instant }: SearchPanelProps) {
   const navigate = useNavigate();
   const [tripType, setTripType] = useState<TripType>("ida-volta");
   const [origem, setOrigem] = useState<City | null>(initial?.origem ?? null);
@@ -194,8 +196,7 @@ export default function SearchPanel({ initial, className }: SearchPanelProps) {
     if (Object.keys(errs).length > 0) return;
 
     setLoading(true);
-    // Simula a varredura do Olho por 1.4s antes de navegar
-    setTimeout(() => {
+    const go = () =>
       navigate(
         buildSearchUrl({
           origem: origem!.iata,
@@ -205,7 +206,8 @@ export default function SearchPanel({ initial, className }: SearchPanelProps) {
           pax,
         }),
       );
-    }, 1400);
+    if (instant) go();
+    else setTimeout(go, 1400);
   };
 
   const bumpPax = (delta: number) => setPax((p) => Math.min(9, Math.max(1, p + delta)));
@@ -451,7 +453,7 @@ export default function SearchPanel({ initial, className }: SearchPanelProps) {
           ) : (
             <>
               <img src="/assets/logo.svg" alt="" className="h-6 w-6" />
-              <span>Vasculhar o mundo</span>
+              <span>{cta}</span>
             </>
           )}
         </button>
