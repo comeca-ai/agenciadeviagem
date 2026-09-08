@@ -50,7 +50,7 @@ export default function FlightCard({ oferta, badge, onReservar }: FlightCardProp
       </div>
       <div className="flex items-center gap-1.5 border-t border-mist/[0.08] px-5 py-3">
         <ExternalLink size={12} className="shrink-0 text-mist-dim" />
-        <p className="text-[12px] text-[#4B5364]">Preço sujeito a alteração · reserva concluída no site do parceiro</p>
+        <p className="text-[12px] text-[#4B5364]">Reserva e pagamento no parceiro · preço confirmado no site dele</p>
       </div>
     </article>
   );

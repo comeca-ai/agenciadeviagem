@@ -8,14 +8,9 @@ interface FiltrosPerfilProps {
   onChange: (perfil: Perfil) => void;
 }
 
-/**
- * Seção 2 — Barra sticky de filtros por perfil (chips horizontais
- * scrolláveis). Chip ativo: fundo âmbar / texto night (contraste no tema claro).
- */
 export default function FiltrosPerfil({ ativo, onChange }: FiltrosPerfilProps) {
   const barRef = useRef<HTMLDivElement>(null);
 
-  // Barra desliza de y -20 → 0 ao sair do hero
   useEffect(() => {
     if (prefersReducedMotion()) return;
     const ctx = gsap.context(() => {
@@ -35,7 +30,7 @@ export default function FiltrosPerfil({ ativo, onChange }: FiltrosPerfilProps) {
   }, []);
 
   return (
-    <div className="sticky top-[4.5rem] z-30 border-b border-mist/10 bg-ink/75 backdrop-blur-[16px]">
+    <div className="sticky top-16 z-30 border-b border-mist/10 bg-[rgba(245,242,234,0.92)] backdrop-blur-[14px]">
       <div ref={barRef} className="container-site">
         <div
           className="scroller-thin flex gap-2.5 overflow-x-auto py-4"
