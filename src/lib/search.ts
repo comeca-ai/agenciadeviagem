@@ -1,17 +1,5 @@
 import { z } from "zod";
 
-/**
- * Contrato de busca do Olho de Tandera.
- *
- * URL de resultados:
- *   /resultados?origem=IATA&destino=IATA&ida=YYYY-MM-DD&volta=YYYY-MM-DD&pax=N
- *
- * - origem/destino: código IATA (3 letras maiúsculas)
- * - ida: data ISO (YYYY-MM-DD), obrigatória
- * - volta: data ISO (YYYY-MM-DD), omitida em viagens de "só ida"
- * - pax: número de passageiros (1–9), default 1
- */
-
 export interface SearchParams {
   origem: string;
   destino: string;
@@ -20,15 +8,27 @@ export interface SearchParams {
   pax: number;
 }
 
+function isoOffset(dias: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() + dias);
+  return d.toISOString().slice(0, 10);
+}
+
+export function defaultIda(): string {
+  return isoOffset(21);
+}
+
+export function defaultVolta(): string {
+  return isoOffset(28);
+}
+
 const iata = z
   .string()
   .trim()
   .toUpperCase()
   .regex(/^[A-Z]{3}$/, "Use o código IATA do aeroporto (ex.: GRU).");
 
-const isoDate = z
-  .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, "Data inválida (use aaaa-mm-dd).");
+const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Data inválida (use aaaa-mm-dd).");
 
 export const searchParamsSchema = z
   .object({
@@ -47,7 +47,6 @@ export const searchParamsSchema = z
     path: ["volta"],
   });
 
-/** Monta a URL de resultados a partir dos parâmetros validados. */
 export function buildSearchUrl(params: SearchParams): string {
   const q = new URLSearchParams();
   q.set("origem", params.origem.toUpperCase());
@@ -58,11 +57,6 @@ export function buildSearchUrl(params: SearchParams): string {
   return `/resultados?${q.toString()}`;
 }
 
-/**
- * Lê e valida os parâmetros de busca de uma query string.
- * Retorna `null` quando ausentes/inválidos (a página de resultados
- * usa então a rota demo padrão).
- */
 export function parseSearchParams(search: string | URLSearchParams): SearchParams | null {
   const sp = typeof search === "string" ? new URLSearchParams(search) : search;
   const raw = {
