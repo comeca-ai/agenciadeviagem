@@ -4,12 +4,12 @@ import { fmtIntervaloDatas } from "./format";
 
 interface RouteBarProps {
   params: SearchParams;
-  isDemo: boolean;
-  ativo: boolean;
+  isDemo?: boolean;
+  ativo?: boolean;
   onEditar: () => void;
 }
 
-export default function RouteBar({ params, isDemo, onEditar }: RouteBarProps) {
+export default function RouteBar({ params, onEditar }: RouteBarProps) {
   const origem = cityByIata(params.origem);
   const destino = cityByIata(params.destino);
 
@@ -28,7 +28,6 @@ export default function RouteBar({ params, isDemo, onEditar }: RouteBarProps) {
           <p className="mono-data mt-0.5 text-[12px] text-mist-dim">
             {fmtIntervaloDatas(params.ida, params.volta)} · {params.pax}{" "}
             {params.pax === 1 ? "adulto" : "adultos"} · {params.volta ? "ida e volta" : "só ida"}
-            {isDemo ? " · demo" : ""}
           </p>
         </div>
         <button type="button" onClick={onEditar} className="ml-auto h-11 rounded-full border border-mist/20 px-4 text-sm font-semibold text-mist">

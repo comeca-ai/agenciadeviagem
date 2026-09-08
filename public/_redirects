@@ -1,1 +1,2 @@
-/*    /index.html   200
+# SPA fica a cargo do Worker (wrangler.toml not_found_handling).
+# Arquivo vazio de proposito: regra /* -> /index.html 200 gerava loop no deploy.
