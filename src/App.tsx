@@ -7,6 +7,8 @@ const Resultados = lazy(() => import("./pages/Resultados"));
 const Destinos = lazy(() => import("./pages/Destinos"));
 const ALenda = lazy(() => import("./pages/ALenda"));
 const ComoFunciona = lazy(() => import("./pages/ComoFunciona"));
+const Entrar = lazy(() => import("./pages/Entrar"));
+const Alertas = lazy(() => import("./pages/Alertas"));
 
 function RouteFallback() {
   return (
@@ -26,6 +28,8 @@ export default function App() {
           <Route path="destinos" element={<Destinos />} />
           <Route path="a-lenda" element={<ALenda />} />
           <Route path="como-funciona" element={<ComoFunciona />} />
+          <Route path="entrar" element={<Entrar />} />
+          <Route path="conta/alertas" element={<Alertas />} />
           <Route path="*" element={<Home />} />
         </Route>
       </Routes>
