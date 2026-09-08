@@ -27,6 +27,7 @@ export default function App() {
           <Route path="resultados" element={<Resultados />} />
           <Route path="destinos" element={<Destinos />} />
           <Route path="a-lenda" element={<ALenda />} />
+          <Route path="quem-e-tandera" element={<ALenda />} />
           <Route path="como-funciona" element={<ComoFunciona />} />
           <Route path="entrar" element={<Entrar />} />
           <Route path="conta/alertas" element={<Alertas />} />
