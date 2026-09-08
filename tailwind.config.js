@@ -19,6 +19,7 @@ module.exports = {
         amber: "#F0A832",
         ember: "#E4572E",
         teal: "#0F8F84",
+        "teal-text": "#0A6E66",
         "gold-soft": "#C4891A",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
