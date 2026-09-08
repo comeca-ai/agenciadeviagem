@@ -1,15 +1,10 @@
 import { useEffect } from "react";
 import { Link, useLocation } from "react-router";
 import SearchPanel from "@/components/SearchPanel";
+import CompromissosBar from "@/components/CompromissosBar";
 import { cityByIata } from "@/lib/cities";
 import { defaultIda, defaultVolta } from "@/lib/search";
 import { DESTINOS, DESTAQUE_NORONHA } from "@/components/destinos/data";
-
-const CONFIANCA = [
-  { tag: "Preço", titulo: "Taxas já inclusas", texto: "O número na tela é o que você paga por pessoa. Se a tarifa mudar, avisamos antes." },
-  { tag: "Reserva", titulo: "Compra no parceiro", texto: "Você conclui no site da companhia ou da agência. Sem intermediário no cartão." },
-  { tag: "Acesso", titulo: "Sem cadastro para buscar", texto: "Conta só para alerta de preço e buscas salvas." },
-];
 
 const DESTAQUES = [DESTAQUE_NORONHA, ...DESTINOS].slice(0, 8);
 
@@ -30,12 +25,14 @@ export default function Home() {
   return (
     <>
       <section className="container-site pb-2 pt-[clamp(2.25rem,5vw,4rem)]">
-        <p className="mono-data mb-3.5 text-[12px] uppercase tracking-[0.22em] text-teal">Agência 100% digital · 18+</p>
+        <p className="mono-data mb-3.5 text-[12px] uppercase tracking-[0.22em] text-teal-text">
+          Agência 100% digital · homologada por parceiros internacionais
+        </p>
         <h1 className="mb-4 max-w-[16ch] font-display text-[clamp(2.1rem,5.2vw,3.6rem)] font-semibold leading-[1.04] tracking-tight text-mist">
           Passagens com o preço final na tela.
         </h1>
         <p className="max-w-[56ch] text-[clamp(1rem,1.5vw,1.125rem)] leading-relaxed text-[#4B5364]">
-          Comparamos as tarifas das companhias e das agências parceiras. Você vê quanto vai pagar — com taxas — antes de sair daqui, e conclui a reserva direto com o parceiro.
+          Voos para o mundo todo. Comparamos as tarifas das companhias e das agências parceiras. Você vê quanto vai pagar — com taxas — antes de sair daqui, e conclui a reserva direto com o parceiro.
         </p>
       </section>
 
@@ -46,31 +43,29 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="container-site grid gap-3 py-12 md:grid-cols-3">
-        {CONFIANCA.map((c) => (
-          <div key={c.tag} className="rounded-2xl border border-mist/10 bg-[#FBF9F3] p-5">
-            <p className="mono-data mb-2 text-[11px] uppercase tracking-[0.18em] text-teal">{c.tag}</p>
-            <p className="font-semibold text-mist">{c.titulo}</p>
-            <p className="mt-1.5 text-sm leading-relaxed text-[#4B5364]">{c.texto}</p>
-          </div>
-        ))}
-      </section>
+      <CompromissosBar />
 
       <section className="container-site pb-20">
         <div className="mb-5 flex items-end justify-between gap-4">
-          <h2 className="font-display text-[clamp(1.4rem,2.4vw,1.8rem)] font-semibold text-mist">Destinos para buscar</h2>
-          <Link to="/destinos" className="whitespace-nowrap text-sm font-semibold text-teal">Ver destinos →</Link>
+          <h2 className="font-display text-[clamp(1.4rem,2.4vw,1.8rem)] font-semibold tracking-tight text-mist">
+            Destinos para buscar
+          </h2>
+          <Link to="/destinos" className="whitespace-nowrap text-sm font-semibold text-teal-text">
+            Ver os 8 destinos →
+          </Link>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {DESTAQUES.map((d) => (
+          {DESTAQUES.slice(0, 3).map((d) => (
             <Link key={d.nome} to={d.url} className="group overflow-hidden rounded-2xl border border-mist/10 bg-[#FBF9F3]">
               <div className="aspect-[4/3] overflow-hidden bg-ink-2">
                 <img src={d.imagem} alt="" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
               </div>
               <div className="p-4">
-                <p className="font-semibold text-mist">{d.nome}</p>
-                <p className="mt-1 text-sm text-[#4B5364]">{d.rota.origem} → {d.rota.destino}</p>
-                <p className="mt-2 text-sm font-semibold text-teal">Buscar esta rota →</p>
+                <p className="font-display text-[21px] font-semibold tracking-tight text-mist">{d.nome}</p>
+                <p className="mono-data mt-1 text-[13px] text-mist-dim">
+                  {d.rota.origem} → {d.rota.destino}
+                </p>
+                <p className="mt-3 text-sm font-semibold text-teal-text">Ver voos →</p>
               </div>
             </Link>
           ))}
