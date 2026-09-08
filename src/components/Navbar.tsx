@@ -11,7 +11,7 @@ const PRIMARY = [
 ];
 
 const SECONDARY = [
-  { label: "A Lenda", to: "/a-lenda" },
+  { label: "Quem é Tandera", to: "/quem-e-tandera" },
   { label: "Alertas", to: "/conta/alertas" },
 ];
 
