@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -16,9 +16,6 @@ const SECONDARY = [
 ];
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(
-    () => typeof window !== "undefined" && window.scrollY > 12,
-  );
   const [open, setOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -28,12 +25,6 @@ export default function Navbar() {
     setPrevPath(location.pathname);
     if (open) setOpen(false);
   }
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   const handleBusca = (e: React.MouseEvent) => {
     e.preventDefault();
